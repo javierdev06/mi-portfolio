@@ -38,7 +38,7 @@ export default function Panel({ section, onClose }: PanelProps) {
   }
 
   return (
-    <div style={{
+    <div data-panel="true" style={{
       position: "absolute",
       inset: 0,
       display: "flex",
@@ -54,20 +54,17 @@ export default function Panel({ section, onClose }: PanelProps) {
         width: 400,
         position: "relative"
       }}>
-        <button
-          onClick={onClose}
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 16,
-            color: "#7a9e7a",
-            fontFamily: "monospace",
-            fontSize: 12,
-            background: "none",
-            border: "none",
-            cursor: "pointer"
-          }}
-        >
+        <button onClick={onClose} style={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          color: "#7a9e7a",
+          fontFamily: "monospace",
+          fontSize: 12,
+          background: "none",
+          border: "none",
+          cursor: "pointer"
+        }}>
           [X] cerrar
         </button>
         {content[section]}

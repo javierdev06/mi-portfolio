@@ -3,13 +3,21 @@
 import { useEffect, useRef, useState } from "react"
 import Panel from "./components/Panel"
 
+let closePanelFn: (() => void) | null = null
+let openPanelFn: ((s: string) => void) | null = null
+
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
 
+  closePanelFn = () => setActiveSection(null)
+  openPanelFn = (s: string) => setActiveSection(s)
+
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx = canvas.getContext("2d")!
+
+    canvas.focus()
 
     const player = { x: 400, y: 300, size: 20, speed: 3 }
     const keys: Record<string, boolean> = {}
@@ -20,15 +28,22 @@ export default function Home() {
       { x: 650, y: 150, size: 40, color: "#ff4444", label: "contacto" },
     ]
 
+    const isOpen = () => document.querySelector("[data-panel]") !== null
+
     window.addEventListener("keydown", (e) => {
       keys[e.key] = true
-      if (e.key === "e" || e.key === "E") {
+
+      if ((e.key === "e" || e.key === "E") && !isOpen()) {
         const near = objects.find(obj => {
           const dx = player.x - obj.x
           const dy = player.y - obj.y
           return Math.sqrt(dx*dx + dy*dy) < 70
         })
-        if (near) setActiveSection(near.label)
+        if (near) openPanelFn?.(near.label)
+      }
+
+      if (e.key === "x" || e.key === "X") {
+        closePanelFn?.()
       }
     })
 
@@ -65,7 +80,7 @@ export default function Home() {
         return Math.sqrt(dx*dx + dy*dy) < 70
       })
 
-      if (near) {
+      if (near && !isOpen()) {
         ctx.fillStyle = "#00ff41"
         ctx.font = "14px monospace"
         ctx.textAlign = "center"
@@ -74,6 +89,7 @@ export default function Home() {
     }
 
     const update = () => {
+      if (isOpen()) return
       if (keys["ArrowLeft"]) player.x -= player.speed
       if (keys["ArrowRight"]) player.x += player.speed
       if (keys["ArrowUp"]) player.y -= player.speed
@@ -94,10 +110,10 @@ export default function Home() {
   return (
     <main className="flex items-center justify-center min-h-screen bg-black">
       <div style={{ position: "relative" }}>
-        <canvas ref={canvasRef} width={800} height={600} />
-        <div style={{ position: "absolute", inset: 0, zIndex: 10 }}>
-          <Panel section={activeSection} onClose={() => setActiveSection(null)} />
-        </div>
+        <canvas ref={canvasRef} width={800} height={600} tabIndex={0} style={{ display: "block" }} />
+        {activeSection && (
+          <Panel section={activeSection} onClose={() => closePanelFn?.()} />
+        )}
       </div>
     </main>
   )
