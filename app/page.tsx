@@ -125,10 +125,17 @@ export default function Home() {
 
     const update = () => {
       if (isOpen()) return
+
       if (keys["ArrowLeft"]) { player.x -= player.speed; player.dir = "left" }
       else if (keys["ArrowRight"]) { player.x += player.speed; player.dir = "right" }
       if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up" }
       else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down" }
+
+      // Límites habitación
+      if (player.x < 30) player.x = 30
+      if (player.x > 770) player.x = 770
+      if (player.y < 95) player.y = 95
+      if (player.y > 580) player.y = 580
     }
 
     let animId: number
