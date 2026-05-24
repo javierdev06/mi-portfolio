@@ -3,9 +3,10 @@ import React from "react"
 type PanelProps = {
   section: string | null
   onClose: () => void
+  allVisited?: boolean
 }
 
-export default function Panel({ section, onClose }: PanelProps) {
+export default function Panel({ section, onClose, allVisited }: PanelProps) {
   if (!section) return null
 
   const content: Record<string, React.ReactNode> = {
@@ -74,21 +75,36 @@ export default function Panel({ section, onClose }: PanelProps) {
         </div>
       </div>
     ),
+    "locked": (
+      <div>
+        <p style={{ color: "#ff4444", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.7 }}>
+          $ ./contacto --open
+        </p>
+        <p style={{ color: "#ff4444", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
+          acceso denegado
+        </p>
+        <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
+          Primero explora la habitacion completa:<br/><br/>
+          - Ve al computador<br/>
+          - Lee la estanteria<br/>
+          - Revisa la puerta del stack<br/><br/>
+          Luego el contacto se desbloqueara.
+        </p>
+      </div>
+    ),
     "npc": (
       <div>
         <p style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.7 }}>
           $ ./asistente --talk
         </p>
         <p style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
-          Hola, soy el asistente de Javier.
+          {allVisited ? "Misión completada." : "Hola, soy el asistente de Javier."}
         </p>
         <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
-          Explora la habitacion interactuando con los objetos:<br/><br/>
-          - Computador: proyectos reales<br/>
-          - Estanteria: sobre Javier<br/>
-          - Telefono: contacto directo<br/>
-          - Puerta derecha: stack tecnico<br/><br/>
-          Presiona X para cerrar.
+          {allVisited
+            ? "Ya exploraste todo. Ahora puedes contactar a Javier directamente."
+            : "Explora la habitacion antes de contactar a Javier:\n\n- Computador: proyectos\n- Estanteria: sobre el\n- Puerta derecha: stack\n\nCuando los visites todos, el contacto se desbloqueara."
+          }
         </p>
       </div>
     ),
@@ -152,7 +168,7 @@ export default function Panel({ section, onClose }: PanelProps) {
     }}>
       <div style={{
         background: "#0a0a0a",
-        border: "1px solid rgba(0,255,65,0.3)",
+        border: `1px solid ${section === "locked" ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
         borderRadius: 6,
         width: 420,
         position: "relative",
@@ -164,7 +180,7 @@ export default function Panel({ section, onClose }: PanelProps) {
           gap: 8,
           padding: "10px 16px",
           background: "#0d0d0d",
-          borderBottom: "1px solid rgba(0,255,65,0.1)"
+          borderBottom: `1px solid ${section === "locked" ? "rgba(255,65,65,0.2)" : "rgba(0,255,65,0.1)"}`
         }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />

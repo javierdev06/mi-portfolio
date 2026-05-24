@@ -5,17 +5,31 @@ import Panel from "./components/Panel"
 
 let closePanelFn: (() => void) | null = null
 let openPanelFn: ((s: string) => void) | null = null
+let getVisited: (() => string[]) | null = null
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [started, setStarted] = useState(false)
   const [muted, setMuted] = useState(false)
+  const [visited, setVisited] = useState<string[]>([])
   const audioCtxRef = useRef<AudioContext | null>(null)
   const musicGainRef = useRef<GainNode | null>(null)
+  const visitedRef = useRef<string[]>([])
 
   closePanelFn = () => setActiveSection(null)
   openPanelFn = (s: string) => setActiveSection(s)
+  getVisited = () => visitedRef.current
+
+  const markVisited = (label: string) => {
+    if (!visitedRef.current.includes(label)) {
+      visitedRef.current = [...visitedRef.current, label]
+      setVisited([...visitedRef.current])
+    }
+  }
+
+  const required = ["proyectos", "sobre mi", "stack"]
+  const allVisited = required.every(r => visited.includes(r))
 
   const playEffect = (freq: number, duration: number, volume: number = 0.15, type: OscillatorType = "sine") => {
     const ctx = audioCtxRef.current
@@ -62,6 +76,15 @@ export default function Home() {
     const notes = [784, 523, 392]
     notes.forEach((freq, i) => {
       setTimeout(() => playEffect(freq, 0.12, 0.1, "sine"), i * 70)
+    })
+  }
+
+  const playUnlock = () => {
+    const ctx = audioCtxRef.current
+    if (!ctx) return
+    const notes = [523, 659, 784, 1046]
+    notes.forEach((freq, i) => {
+      setTimeout(() => playEffect(freq, 0.2, 0.15, "sine"), i * 100)
     })
   }
 
@@ -204,9 +227,28 @@ export default function Home() {
           const dy = player.y - obj.y
           return Math.sqrt(dx*dx + dy*dy) < 70
         })
-        if (near) { playOpen(); openPanelFn?.(near.label) }
+        if (near) {
+          if (near.label === "contacto" && !getVisited?.()?.includes("contacto")) {
+            const allDone = ["proyectos", "sobre mi", "stack"].every(r =>
+              getVisited?.()?.includes(r)
+            )
+            if (!allDone) {
+              openPanelFn?.("locked")
+              return
+            } else {
+              playUnlock()
+              markVisited("contacto")
+            }
+          }
+          if (near.label !== "contacto") markVisited(near.label)
+          playOpen()
+          openPanelFn?.(near.label)
+        }
       }
-      if ((e.key === "x" || e.key === "X") && isOpen()) { playClose(); closePanelFn?.() }
+      if ((e.key === "x" || e.key === "X") && isOpen()) {
+        playClose()
+        closePanelFn?.()
+      }
     })
 
     window.addEventListener("keyup", (e) => { keys[e.key] = false })
@@ -265,11 +307,9 @@ export default function Home() {
     }
 
     const draw = () => {
-      // Piso
       ctx.fillStyle = "#1a1208"
       ctx.fillRect(0, 0, 800, 600)
 
-      // Textura piso
       for (let x = 0; x < 800; x += 32) {
         for (let y = 0; y < 600; y += 32) {
           ctx.strokeStyle = "rgba(255,200,100,0.06)"
@@ -278,14 +318,12 @@ export default function Home() {
         }
       }
 
-      // Luz jugador
       const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
       lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
       lightGradient.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = lightGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      // Luz objetos
       objects.slice(0, 3).forEach(obj => {
         const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
         objLight.addColorStop(0, "rgba(0,255,65,0.04)")
@@ -294,14 +332,12 @@ export default function Home() {
         ctx.fillRect(0, 0, 800, 600)
       })
 
-      // Oscuridad esquinas
       const darkGradient = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
       darkGradient.addColorStop(0, "rgba(0,0,0,0)")
       darkGradient.addColorStop(1, "rgba(0,0,0,0.5)")
       ctx.fillStyle = darkGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      // Pared superior
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
       ctx.fillStyle = "#00ff41"
@@ -317,7 +353,6 @@ export default function Home() {
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(0, 80, 800, 2)
 
-      // Esquinas
       ctx.fillStyle = "#333"
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
@@ -327,83 +362,81 @@ export default function Home() {
       ctx.fillRect(770, 255, 20, 120)
       ctx.fillStyle = "#5c3d1e"
       ctx.fillRect(772, 257, 16, 116)
-
-      // Luz puerta
       const doorLight = ctx.createRadialGradient(780, 315, 0, 780, 315, 60)
       doorLight.addColorStop(0, "rgba(255,180,50,0.15)")
       doorLight.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = doorLight
       ctx.fillRect(0, 0, 800, 600)
-
-      // Manija puerta
       ctx.fillStyle = "#ffaa00"
       ctx.beginPath()
       ctx.arc(774, 315, 3, 0, Math.PI * 2)
       ctx.fill()
 
-      // Label puerta
-      const doorDist = Math.sqrt((player.x - 760) ** 2 + (player.y - 330) ** 2)
-      if (doorDist < 70) {
-        ctx.fillStyle = "#ffaa00"
-        ctx.font = "9px monospace"
-        ctx.textAlign = "center"
-        ctx.fillText("stack tecnico", 730, 245)
-      }
-
-      // Objetos sala
+      // Objetos
       const drawPC = (x: number, y: number) => {
+        const done = visitedRef.current.includes("proyectos")
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 18, y + 6, 40, 6)
         ctx.fillStyle = "#222"
         ctx.fillRect(x - 20, y - 24, 40, 28)
-        ctx.fillStyle = "#0a2a0a"
+        ctx.fillStyle = done ? "#0a3a0a" : "#0a2a0a"
         ctx.fillRect(x - 16, y - 20, 32, 20)
-        ctx.fillStyle = "#00ff41"
+        ctx.fillStyle = done ? "#00ff41" : "#005511"
         ctx.font = "6px monospace"
         ctx.textAlign = "center"
-        ctx.fillText(">_", x, y - 8)
+        ctx.fillText(done ? "OK" : ">_", x, y - 8)
         ctx.fillStyle = "#333"
         ctx.fillRect(x - 4, y + 4, 8, 4)
         ctx.fillRect(x - 10, y + 8, 20, 3)
-        ctx.fillStyle = "#ffffff"
+        ctx.fillStyle = done ? "#00ff41" : "#ffffff"
         ctx.font = "10px monospace"
         ctx.fillText("proyectos", x, y + 24)
       }
 
       const drawShelf = (x: number, y: number) => {
+        const done = visitedRef.current.includes("sobre mi")
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 20, y + 22, 44, 6)
-        ctx.fillStyle = "#5c3d1e"
+        ctx.fillStyle = done ? "#3d2a0a" : "#5c3d1e"
         ctx.fillRect(x - 22, y - 28, 44, 4)
         ctx.fillRect(x - 22, y - 4, 44, 4)
         ctx.fillRect(x - 22, y + 20, 44, 4)
         const books = ["#ff4444", "#4444ff", "#ffaa00", "#00ff41", "#ff44ff"]
         books.forEach((color, i) => {
-          ctx.fillStyle = color
+          ctx.fillStyle = done ? "#00ff41" : color
           ctx.fillRect(x - 18 + i * 9, y - 24, 7, 20)
         })
-        ctx.fillStyle = "#ffffff"
+        ctx.fillStyle = done ? "#00ff41" : "#ffffff"
         ctx.font = "10px monospace"
         ctx.textAlign = "center"
         ctx.fillText("sobre mi", x, y + 36)
       }
 
       const drawPhone = (x: number, y: number) => {
+        const done = visitedRef.current.includes("contacto")
+        const unlocked = ["proyectos", "sobre mi", "stack"].every(r => visitedRef.current.includes(r))
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 10, y + 18, 24, 6)
-        ctx.fillStyle = "#222"
+        ctx.fillStyle = unlocked ? "#222" : "#111"
         ctx.fillRect(x - 12, y - 24, 24, 40)
-        ctx.fillStyle = "#001a33"
+        ctx.fillStyle = done ? "#001a33" : (unlocked ? "#001a33" : "#0a0a0a")
         ctx.fillRect(x - 9, y - 20, 18, 28)
         ctx.fillStyle = "#444"
         ctx.fillRect(x - 4, y + 12, 8, 4)
-        ctx.fillStyle = "#00ff41"
+        ctx.fillStyle = done ? "#00ff41" : (unlocked ? "#00ff41" : "#333")
         ctx.font = "8px monospace"
         ctx.textAlign = "center"
-        ctx.fillText("@", x, y - 4)
-        ctx.fillStyle = "#ffffff"
+        ctx.fillText(unlocked ? "@" : "X", x, y - 4)
+        ctx.fillStyle = done ? "#00ff41" : (unlocked ? "#ffffff" : "#444")
         ctx.font = "10px monospace"
         ctx.fillText("contacto", x, y + 26)
+
+        // Candado si no desbloqueado
+        if (!unlocked) {
+          ctx.fillStyle = "#ff4444"
+          ctx.font = "12px monospace"
+          ctx.fillText("[]", x, y - 36)
+        }
       }
 
       drawPC(150, 150)
@@ -439,6 +472,27 @@ export default function Home() {
         ctx.textAlign = "center"
         ctx.fillText(`[E] ver ${near.label}`, 400, 580)
       }
+
+      // HUD mision
+      const misionItems = [
+        { label: "proyectos", done: visitedRef.current.includes("proyectos") },
+        { label: "sobre mi", done: visitedRef.current.includes("sobre mi") },
+        { label: "stack", done: visitedRef.current.includes("stack") },
+      ]
+
+      ctx.fillStyle = "rgba(0,0,0,0.5)"
+      ctx.fillRect(20, 95, 160, 80)
+      ctx.fillStyle = "rgba(0,255,65,0.3)"
+      ctx.strokeRect(20, 95, 160, 80)
+      ctx.fillStyle = "#00ff41"
+      ctx.font = "9px monospace"
+      ctx.textAlign = "left"
+      ctx.fillText("// mision", 28, 110)
+
+      misionItems.forEach(({ label, done }, i) => {
+        ctx.fillStyle = done ? "#00ff41" : "#555"
+        ctx.fillText(`${done ? "[x]" : "[ ]"} ${label}`, 28, 125 + i * 15)
+      })
     }
 
     const updateNPC = () => {
@@ -510,7 +564,11 @@ export default function Home() {
       <div style={{ position: "relative" }}>
         <canvas ref={canvasRef} width={800} height={600} tabIndex={0} style={{ display: "block" }} />
         {activeSection && (
-          <Panel section={activeSection} onClose={() => closePanelFn?.()} />
+          <Panel
+            section={activeSection}
+            onClose={() => closePanelFn?.()}
+            allVisited={allVisited}
+          />
         )}
         {started && (
           <button
