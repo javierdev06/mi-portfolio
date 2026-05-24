@@ -10,9 +10,112 @@ export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [started, setStarted] = useState(false)
+  const [muted, setMuted] = useState(false)
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const musicGainRef = useRef<GainNode | null>(null)
 
   closePanelFn = () => setActiveSection(null)
   openPanelFn = (s: string) => setActiveSection(s)
+
+  const playEffect = (freq: number, duration: number, volume: number = 0.15, type: OscillatorType = "sine") => {
+    const ctx = audioCtxRef.current
+    if (!ctx) return
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.frequency.value = freq
+    osc.type = type
+    gain.gain.setValueAtTime(volume, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + duration)
+  }
+
+  const playStep = () => {
+    const ctx = audioCtxRef.current
+    if (!ctx) return
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.frequency.value = 120 + Math.random() * 40
+    osc.type = "sine"
+    gain.gain.setValueAtTime(0.04, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + 0.08)
+  }
+
+  const playOpen = () => {
+    const ctx = audioCtxRef.current
+    if (!ctx) return
+    const notes = [523, 659, 784]
+    notes.forEach((freq, i) => {
+      setTimeout(() => playEffect(freq, 0.15, 0.12, "sine"), i * 80)
+    })
+  }
+
+  const playClose = () => {
+    const ctx = audioCtxRef.current
+    if (!ctx) return
+    const notes = [784, 523, 392]
+    notes.forEach((freq, i) => {
+      setTimeout(() => playEffect(freq, 0.12, 0.1, "sine"), i * 70)
+    })
+  }
+
+  const startMusic = (ctx: AudioContext) => {
+    const musicGain = ctx.createGain()
+    musicGain.gain.value = 0.04
+    musicGain.connect(ctx.destination)
+    musicGainRef.current = musicGain
+
+    const melody = [
+      392, 440, 494, 523,
+      494, 440, 392, 349,
+      392, 349, 330, 294,
+      330, 349, 392, 392,
+    ]
+
+    const bass = [
+      196, 196, 220, 220,
+      247, 247, 261, 261,
+      196, 196, 175, 175,
+      165, 175, 196, 196,
+    ]
+
+    let i = 0
+    const playBeat = () => {
+      // Melodia
+      const osc1 = ctx.createOscillator()
+      const gain1 = ctx.createGain()
+      osc1.connect(gain1)
+      gain1.connect(musicGain)
+      osc1.frequency.value = melody[i % melody.length]
+      osc1.type = "square"
+      gain1.gain.setValueAtTime(0.5, ctx.currentTime)
+      gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
+      osc1.start(ctx.currentTime)
+      osc1.stop(ctx.currentTime + 0.35)
+
+      // Bajo
+      const osc2 = ctx.createOscillator()
+      const gain2 = ctx.createGain()
+      osc2.connect(gain2)
+      gain2.connect(musicGain)
+      osc2.frequency.value = bass[i % bass.length]
+      osc2.type = "triangle"
+      gain2.gain.setValueAtTime(0.3, ctx.currentTime)
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
+      osc2.start(ctx.currentTime)
+      osc2.stop(ctx.currentTime + 0.35)
+
+      i++
+    }
+
+    setInterval(playBeat, 350)
+  }
 
   useEffect(() => {
     if (started) return
@@ -75,7 +178,14 @@ export default function Home() {
     const loop = () => { drawIntro(); animId = requestAnimationFrame(loop) }
     loop()
 
-    const handleEnter = (e: KeyboardEvent) => { if (e.key === "Enter") setStarted(true) }
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        const audioCtx = new AudioContext()
+        audioCtxRef.current = audioCtx
+        startMusic(audioCtx)
+        setStarted(true)
+      }
+    }
     window.addEventListener("keydown", handleEnter)
 
     return () => { cancelAnimationFrame(animId); window.removeEventListener("keydown", handleEnter) }
@@ -92,6 +202,7 @@ export default function Home() {
     const npc = { x: 600, y: 400, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
     const keys: Record<string, boolean> = {}
     let frameTimer = 0
+    let stepTimer = 0
 
     const objects = [
       { x: 150, y: 150, label: "proyectos" },
@@ -110,9 +221,15 @@ export default function Home() {
           const dy = player.y - obj.y
           return Math.sqrt(dx*dx + dy*dy) < 70
         })
-        if (near) openPanelFn?.(near.label)
+        if (near) {
+          playOpen()
+          openPanelFn?.(near.label)
+        }
       }
-      if ((e.key === "x" || e.key === "X") && isOpen()) closePanelFn?.()
+      if ((e.key === "x" || e.key === "X") && isOpen()) {
+        playClose()
+        closePanelFn?.()
+      }
     })
 
     window.addEventListener("keyup", (e) => { keys[e.key] = false })
@@ -284,10 +401,8 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
-      // NPC
       drawCharacter(npc.x, npc.y, npc.dir, npc.frame, "#4444aa", "#f5c5a3", "#ffaa00")
 
-      // Burbuja NPC
       const npcDist = Math.sqrt((player.x - npc.x) ** 2 + (player.y - npc.y) ** 2)
       if (npcDist < 70) {
         ctx.fillStyle = "rgba(0,0,0,0.8)"
@@ -298,10 +413,8 @@ export default function Home() {
         ctx.fillText("[ E ] hablar", npc.x, npc.y - 36)
       }
 
-      // Jugador
       drawCharacter(player.x, player.y, player.dir, player.frame, "#2d4a2d", "#f5c5a3", "#00ff41")
 
-      // Hint objetos
       const near = objects.slice(0, 3).find(obj => {
         const dx = player.x - obj.x
         const dy = player.y - obj.y
@@ -358,8 +471,11 @@ export default function Home() {
       if (player.moving) {
         frameTimer++
         if (frameTimer > 8) { player.frame++; frameTimer = 0 }
+        stepTimer++
+        if (stepTimer > 20) { playStep(); stepTimer = 0 }
       } else {
         player.frame = 0
+        stepTimer = 0
       }
 
       updateNPC()
@@ -383,6 +499,36 @@ export default function Home() {
         <canvas ref={canvasRef} width={800} height={600} tabIndex={0} style={{ display: "block" }} />
         {activeSection && (
           <Panel section={activeSection} onClose={() => closePanelFn?.()} />
+        )}
+        {started && (
+          <button
+            onClick={() => {
+              const musicGain = musicGainRef.current
+              if (!musicGain) return
+              if (!muted) {
+                musicGain.gain.setTargetAtTime(0, audioCtxRef.current!.currentTime, 0.3)
+              } else {
+                musicGain.gain.setTargetAtTime(0.04, audioCtxRef.current!.currentTime, 0.3)
+              }
+              setMuted(m => !m)
+            }}
+            style={{
+              position: "absolute",
+              bottom: 12,
+              right: 12,
+              background: "rgba(0,0,0,0.7)",
+              border: `1px solid ${muted ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
+              color: muted ? "#ff4141" : "#00ff41",
+              fontFamily: "monospace",
+              fontSize: 11,
+              padding: "4px 10px",
+              borderRadius: 3,
+              cursor: "pointer",
+              zIndex: 20,
+            }}
+          >
+            {muted ? "[ musica: off ]" : "[ musica: on ]"}
+          </button>
         )}
       </div>
     </main>
