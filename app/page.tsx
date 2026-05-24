@@ -63,6 +63,35 @@ export default function Home() {
         }
       }
 
+      // Luz del jugador en el piso
+      const lightGradient = ctx.createRadialGradient(
+        player.x, player.y, 0,
+        player.x, player.y, 120
+      )
+      lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
+      lightGradient.addColorStop(1, "rgba(0,0,0,0)")
+      ctx.fillStyle = lightGradient
+      ctx.fillRect(0, 0, 800, 600)
+
+      // Luz en los objetos
+      objects.forEach(obj => {
+        const objLight = ctx.createRadialGradient(
+          obj.x, obj.y, 0,
+          obj.x, obj.y, 80
+        )
+        objLight.addColorStop(0, "rgba(0,255,65,0.04)")
+        objLight.addColorStop(1, "rgba(0,0,0,0)")
+        ctx.fillStyle = objLight
+        ctx.fillRect(0, 0, 800, 600)
+      })
+
+      // Oscuridad en esquinas
+      const darkGradient = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
+      darkGradient.addColorStop(0, "rgba(0,0,0,0)")
+      darkGradient.addColorStop(1, "rgba(0,0,0,0.5)")
+      ctx.fillStyle = darkGradient
+      ctx.fillRect(0, 0, 800, 600)
+
       // Pared superior
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
@@ -75,7 +104,6 @@ export default function Home() {
 
       ctx.fillStyle = "rgba(0,255,65,0.4)"
       ctx.font = "11px monospace"
-      ctx.textAlign = "center"
       ctx.fillText("full stack developer · portfolio", 400, 55)
 
       // Líneas decorativas
@@ -94,6 +122,10 @@ export default function Home() {
 
       // Computador (proyectos)
       const drawPC = (x: number, y: number) => {
+        // Sombra
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 18, y + 6, 40, 6)
+
         ctx.fillStyle = "#222"
         ctx.fillRect(x - 20, y - 24, 40, 28)
         ctx.fillStyle = "#0a2a0a"
@@ -112,6 +144,10 @@ export default function Home() {
 
       // Estantería (sobre mi)
       const drawShelf = (x: number, y: number) => {
+        // Sombra
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 20, y + 22, 44, 6)
+
         ctx.fillStyle = "#5c3d1e"
         ctx.fillRect(x - 22, y - 28, 44, 4)
         ctx.fillRect(x - 22, y - 4, 44, 4)
@@ -129,6 +165,10 @@ export default function Home() {
 
       // Teléfono (contacto)
       const drawPhone = (x: number, y: number) => {
+        // Sombra
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 10, y + 18, 24, 6)
+
         ctx.fillStyle = "#222"
         ctx.fillRect(x - 12, y - 24, 24, 40)
         ctx.fillStyle = "#001a33"
