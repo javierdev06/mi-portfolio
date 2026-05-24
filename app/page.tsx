@@ -6,6 +6,11 @@ import Panel from "./components/Panel"
 let closePanelFn: (() => void) | null = null
 let openPanelFn: ((s: string) => void) | null = null
 
+const WORLD_WIDTH = 1600
+const WORLD_HEIGHT = 600
+const SCREEN_W = 800
+const SCREEN_H = 600
+
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -71,23 +76,11 @@ export default function Home() {
     musicGain.connect(ctx.destination)
     musicGainRef.current = musicGain
 
-    const melody = [
-      392, 440, 494, 523,
-      494, 440, 392, 349,
-      392, 349, 330, 294,
-      330, 349, 392, 392,
-    ]
-
-    const bass = [
-      196, 196, 220, 220,
-      247, 247, 261, 261,
-      196, 196, 175, 175,
-      165, 175, 196, 196,
-    ]
+    const melody = [392, 440, 494, 523, 494, 440, 392, 349, 392, 349, 330, 294, 330, 349, 392, 392]
+    const bass = [196, 196, 220, 220, 247, 247, 261, 261, 196, 196, 175, 175, 165, 175, 196, 196]
 
     let i = 0
     const playBeat = () => {
-      // Melodia
       const osc1 = ctx.createOscillator()
       const gain1 = ctx.createGain()
       osc1.connect(gain1)
@@ -99,7 +92,6 @@ export default function Home() {
       osc1.start(ctx.currentTime)
       osc1.stop(ctx.currentTime + 0.35)
 
-      // Bajo
       const osc2 = ctx.createOscillator()
       const gain2 = ctx.createGain()
       osc2.connect(gain2)
@@ -110,10 +102,8 @@ export default function Home() {
       gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35)
       osc2.start(ctx.currentTime)
       osc2.stop(ctx.currentTime + 0.35)
-
       i++
     }
-
     setInterval(playBeat, 350)
   }
 
@@ -121,7 +111,6 @@ export default function Home() {
     if (started) return
     const canvas = canvasRef.current!
     const ctx = canvas.getContext("2d")!
-
     let blink = true
     let blinkTimer = 0
 
@@ -162,7 +151,6 @@ export default function Home() {
 
       blinkTimer++
       if (blinkTimer > 30) { blink = !blink; blinkTimer = 0 }
-
       if (blink) {
         ctx.fillStyle = "#00ff41"
         ctx.font = "14px monospace"
@@ -187,7 +175,6 @@ export default function Home() {
       }
     }
     window.addEventListener("keydown", handleEnter)
-
     return () => { cancelAnimationFrame(animId); window.removeEventListener("keydown", handleEnter) }
   }, [started])
 
@@ -198,38 +185,43 @@ export default function Home() {
     const ctx = canvas.getContext("2d")!
     canvas.focus()
 
+    const camera = { x: 0, y: 0 }
     const player = { x: 400, y: 300, speed: 3, dir: "down", moving: false, frame: 0 }
-    const npc = { x: 600, y: 400, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
+    const npc = { x: 300, y: 400, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
     const keys: Record<string, boolean> = {}
     let frameTimer = 0
     let stepTimer = 0
 
-    const objects = [
+    // Sala 1 objetos
+    const room1Objects = [
       { x: 150, y: 150, label: "proyectos" },
       { x: 400, y: 150, label: "sobre mi" },
       { x: 650, y: 150, label: "contacto" },
-      { x: 600, y: 400, label: "npc" },
+      { x: 300, y: 400, label: "npc" },
     ]
 
+    // Sala 2 objetos
+    const room2Objects = [
+      { x: 900, y: 150, label: "frontend" },
+      { x: 1100, y: 150, label: "backend" },
+      { x: 1300, y: 150, label: "deploy" },
+      { x: 1100, y: 380, label: "experiencia" },
+    ]
+
+    const allObjects = [...room1Objects, ...room2Objects]
     const isOpen = () => document.querySelector("[data-panel]") !== null
 
     window.addEventListener("keydown", (e) => {
       keys[e.key] = true
       if ((e.key === "e" || e.key === "E") && !isOpen()) {
-        const near = objects.find(obj => {
+        const near = allObjects.find(obj => {
           const dx = player.x - obj.x
           const dy = player.y - obj.y
           return Math.sqrt(dx*dx + dy*dy) < 70
         })
-        if (near) {
-          playOpen()
-          openPanelFn?.(near.label)
-        }
+        if (near) { playOpen(); openPanelFn?.(near.label) }
       }
-      if ((e.key === "x" || e.key === "X") && isOpen()) {
-        playClose()
-        closePanelFn?.()
-      }
+      if ((e.key === "x" || e.key === "X") && isOpen()) { playClose(); closePanelFn?.() }
     })
 
     window.addEventListener("keyup", (e) => { keys[e.key] = false })
@@ -259,7 +251,6 @@ export default function Home() {
 
       ctx.fillStyle = bodyColor
       ctx.fillRect(x - 8, y - 10, 16, 12)
-
       if (f === 0) {
         ctx.fillRect(x - 12, y - 8, 4, 8)
         ctx.fillRect(x + 8, y - 10, 4, 8)
@@ -270,7 +261,6 @@ export default function Home() {
 
       ctx.fillStyle = headColor
       ctx.fillRect(x - 6, y - 20, 12, 12)
-
       ctx.fillStyle = capColor
       ctx.fillRect(x - 7, y - 22, 14, 4)
       ctx.fillRect(x - 5, y - 26, 10, 4)
@@ -289,38 +279,34 @@ export default function Home() {
       }
     }
 
-    const draw = () => {
+    const drawWorld = () => {
+      // Piso sala 1
       ctx.fillStyle = "#1a1208"
-      ctx.fillRect(0, 0, 800, 600)
+      ctx.fillRect(0, 0, 800, WORLD_HEIGHT)
 
+      // Piso sala 2
+      ctx.fillStyle = "#0d1a1a"
+      ctx.fillRect(800, 0, 800, WORLD_HEIGHT)
+
+      // Grid sala 1
       for (let x = 0; x < 800; x += 32) {
-        for (let y = 0; y < 600; y += 32) {
+        for (let y = 0; y < WORLD_HEIGHT; y += 32) {
           ctx.strokeStyle = "rgba(255,200,100,0.06)"
           ctx.lineWidth = 1
           ctx.strokeRect(x, y, 32, 32)
         }
       }
 
-      const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
-      lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
-      lightGradient.addColorStop(1, "rgba(0,0,0,0)")
-      ctx.fillStyle = lightGradient
-      ctx.fillRect(0, 0, 800, 600)
+      // Grid sala 2
+      for (let x = 800; x < WORLD_WIDTH; x += 32) {
+        for (let y = 0; y < WORLD_HEIGHT; y += 32) {
+          ctx.strokeStyle = "rgba(0,255,65,0.04)"
+          ctx.lineWidth = 1
+          ctx.strokeRect(x, y, 32, 32)
+        }
+      }
 
-      objects.slice(0, 3).forEach(obj => {
-        const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
-        objLight.addColorStop(0, "rgba(0,255,65,0.04)")
-        objLight.addColorStop(1, "rgba(0,0,0,0)")
-        ctx.fillStyle = objLight
-        ctx.fillRect(0, 0, 800, 600)
-      })
-
-      const darkGradient = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
-      darkGradient.addColorStop(0, "rgba(0,0,0,0)")
-      darkGradient.addColorStop(1, "rgba(0,0,0,0.5)")
-      ctx.fillStyle = darkGradient
-      ctx.fillRect(0, 0, 800, 600)
-
+      // Pared sala 1
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
 
@@ -334,14 +320,43 @@ export default function Home() {
       ctx.fillStyle = "rgba(0,255,65,0.2)"
       ctx.fillRect(60, 30, 200, 1)
       ctx.fillRect(540, 30, 200, 1)
-
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(0, 80, 800, 2)
 
-      ctx.fillStyle = "#333"
-      ctx.fillRect(0, 0, 20, 600)
-      ctx.fillRect(780, 0, 20, 600)
+      // Pared sala 2
+      ctx.fillStyle = "#0a0a0a"
+      ctx.fillRect(800, 0, 800, 80)
+      ctx.fillStyle = "#00ff41"
+      ctx.font = "bold 18px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("STACK TECNICO", 1200, 35)
+      ctx.fillStyle = "rgba(0,255,65,0.7)"
+      ctx.font = "11px monospace"
+      ctx.fillText("herramientas que uso", 1200, 55)
+      ctx.fillStyle = "#00ff41"
+      ctx.fillRect(800, 80, 800, 2)
 
+      // Puerta entre salas (sala 1 lado derecho)
+      ctx.fillStyle = "#5c3d1e"
+      ctx.fillRect(788, 250, 12, 100)
+      ctx.fillStyle = "#00ff41"
+      ctx.font = "8px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText(">>", 794, 305)
+
+      // Puerta entre salas (sala 2 lado izquierdo)
+      ctx.fillStyle = "#5c3d1e"
+      ctx.fillRect(800, 250, 12, 100)
+
+      // Esquinas sala 1
+      ctx.fillStyle = "#333"
+      ctx.fillRect(0, 0, 20, WORLD_HEIGHT)
+
+      // Esquinas sala 2
+      ctx.fillStyle = "#333"
+      ctx.fillRect(WORLD_WIDTH - 20, 0, 20, WORLD_HEIGHT)
+
+      // Objetos sala 1
       const drawPC = (x: number, y: number) => {
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 18, y + 6, 40, 6)
@@ -401,6 +416,48 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
+      // Objetos sala 2
+      const drawStackObj = (x: number, y: number, label: string, color: string) => {
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 22, y + 6, 44, 6)
+        ctx.fillStyle = color
+        ctx.fillRect(x - 20, y - 28, 40, 34)
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 16, y - 24, 32, 26)
+        ctx.fillStyle = "#ffffff"
+        ctx.font = "8px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText("{ }", x, y - 8)
+        ctx.fillStyle = "#ffffff"
+        ctx.font = "10px monospace"
+        ctx.fillText(label, x, y + 24)
+      }
+
+      drawStackObj(900, 150, "frontend", "#4444ff")
+      drawStackObj(1100, 150, "backend", "#00aa44")
+      drawStackObj(1300, 150, "deploy", "#ff6600")
+
+      // Objeto experiencia sala 2
+      ctx.fillStyle = "rgba(0,0,0,0.4)"
+      ctx.fillRect(1080, 386, 44, 6)
+      ctx.fillStyle = "#ffaa00"
+      ctx.fillRect(1082, 358, 40, 28)
+      ctx.fillStyle = "#000"
+      ctx.font = "8px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("cv", 1102, 376)
+      ctx.fillStyle = "#ffffff"
+      ctx.font = "10px monospace"
+      ctx.fillText("experiencia", 1102, 400)
+
+      // Luz jugador
+      const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
+      lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
+      lightGradient.addColorStop(1, "rgba(0,0,0,0)")
+      ctx.fillStyle = lightGradient
+      ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT)
+
+      // NPC
       drawCharacter(npc.x, npc.y, npc.dir, npc.frame, "#4444aa", "#f5c5a3", "#ffaa00")
 
       const npcDist = Math.sqrt((player.x - npc.x) ** 2 + (player.y - npc.y) ** 2)
@@ -413,9 +470,19 @@ export default function Home() {
         ctx.fillText("[ E ] hablar", npc.x, npc.y - 36)
       }
 
+      // Jugador
       drawCharacter(player.x, player.y, player.dir, player.frame, "#2d4a2d", "#f5c5a3", "#00ff41")
+    }
 
-      const near = objects.slice(0, 3).find(obj => {
+    const draw = () => {
+      ctx.clearRect(0, 0, SCREEN_W, SCREEN_H)
+      ctx.save()
+      ctx.translate(-camera.x, 0)
+      drawWorld()
+      ctx.restore()
+
+      // UI en espacio de pantalla
+      const near = allObjects.find(obj => {
         const dx = player.x - obj.x
         const dy = player.y - obj.y
         return Math.sqrt(dx*dx + dy*dy) < 70
@@ -425,8 +492,14 @@ export default function Home() {
         ctx.fillStyle = "#00ff41"
         ctx.font = "14px monospace"
         ctx.textAlign = "center"
-        ctx.fillText(`[E] ver ${near.label}`, 400, 580)
+        ctx.fillText(`[E] ver ${near.label}`, SCREEN_W / 2, 580)
       }
+
+      // Indicador sala
+      ctx.fillStyle = "rgba(0,255,65,0.3)"
+      ctx.font = "10px monospace"
+      ctx.textAlign = "right"
+      ctx.fillText(player.x < 800 ? "sala 1 / 2" : "sala 2 / 2", SCREEN_W - 25, 100)
     }
 
     const updateNPC = () => {
@@ -449,13 +522,13 @@ export default function Home() {
       npc.y += npc.dy
       npc.frame++
 
-      if (npc.x < 50) { npc.x = 50; npc.dx = 2; npc.dir = "right" }
-      if (npc.x > 750) { npc.x = 750; npc.dx = -2; npc.dir = "left" }
+      if (npc.x < 30) { npc.x = 30; npc.dx = 2; npc.dir = "right" }
+      if (npc.x > 770) { npc.x = 770; npc.dx = -2; npc.dir = "left" }
       if (npc.y < 100) { npc.y = 100; npc.dy = 2; npc.dir = "down" }
       if (npc.y > 560) { npc.y = 560; npc.dy = -2; npc.dir = "up" }
 
-      objects[3].x = npc.x
-      objects[3].y = npc.y
+      room1Objects[3].x = npc.x
+      room1Objects[3].y = npc.y
     }
 
     const update = () => {
@@ -480,10 +553,16 @@ export default function Home() {
 
       updateNPC()
 
+      // Limites mundo
       if (player.x < 30) player.x = 30
-      if (player.x > 770) player.x = 770
+      if (player.x > WORLD_WIDTH - 30) player.x = WORLD_WIDTH - 30
       if (player.y < 95) player.y = 95
-      if (player.y > 580) player.y = 580
+      if (player.y > 570) player.y = 570
+
+      // Camara sigue al jugador
+      camera.x = player.x - SCREEN_W / 2
+      if (camera.x < 0) camera.x = 0
+      if (camera.x > WORLD_WIDTH - SCREEN_W) camera.x = WORLD_WIDTH - SCREEN_W
     }
 
     let animId: number
@@ -505,11 +584,8 @@ export default function Home() {
             onClick={() => {
               const musicGain = musicGainRef.current
               if (!musicGain) return
-              if (!muted) {
-                musicGain.gain.setTargetAtTime(0, audioCtxRef.current!.currentTime, 0.3)
-              } else {
-                musicGain.gain.setTargetAtTime(0.04, audioCtxRef.current!.currentTime, 0.3)
-              }
+              if (!muted) musicGain.gain.setTargetAtTime(0, audioCtxRef.current!.currentTime, 0.3)
+              else musicGain.gain.setTargetAtTime(0.04, audioCtxRef.current!.currentTime, 0.3)
               setMuted(m => !m)
             }}
             style={{
