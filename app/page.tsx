@@ -9,14 +9,101 @@ let openPanelFn: ((s: string) => void) | null = null
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
+  const [started, setStarted] = useState(false)
 
   closePanelFn = () => setActiveSection(null)
   openPanelFn = (s: string) => setActiveSection(s)
 
+  // Pantalla de inicio
   useEffect(() => {
+    if (started) return
     const canvas = canvasRef.current!
     const ctx = canvas.getContext("2d")!
 
+    let blink = true
+    let blinkTimer = 0
+
+    const drawIntro = () => {
+      ctx.fillStyle = "#060606"
+      ctx.fillRect(0, 0, 800, 600)
+
+      // Grid fondo
+      for (let x = 0; x < 800; x += 32) {
+        for (let y = 0; y < 600; y += 32) {
+          ctx.strokeStyle = "rgba(0,255,65,0.04)"
+          ctx.lineWidth = 1
+          ctx.strokeRect(x, y, 32, 32)
+        }
+      }
+
+      // Glow central
+      const glow = ctx.createRadialGradient(400, 300, 0, 400, 300, 300)
+      glow.addColorStop(0, "rgba(0,255,65,0.08)")
+      glow.addColorStop(1, "rgba(0,0,0,0)")
+      ctx.fillStyle = glow
+      ctx.fillRect(0, 0, 800, 600)
+
+      // Título
+      ctx.fillStyle = "#00ff41"
+      ctx.font = "bold 48px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("JAVIER CORTÉS", 400, 220)
+
+      // Subtítulo
+      ctx.fillStyle = "rgba(0,255,65,0.5)"
+      ctx.font = "16px monospace"
+      ctx.fillText("full stack developer · portfolio", 400, 260)
+
+      // Líneas decorativas
+      ctx.fillStyle = "rgba(0,255,65,0.3)"
+      ctx.fillRect(100, 280, 600, 1)
+
+      // Info
+      ctx.fillStyle = "rgba(0,255,65,0.4)"
+      ctx.font = "12px monospace"
+      ctx.fillText("Python · Flask · JavaScript · React · Next.js", 400, 310)
+      ctx.fillText("Chile 🇨🇱 · disponible para proyectos", 400, 335)
+
+      // Press enter parpadeante
+      blinkTimer++
+      if (blinkTimer > 30) { blink = !blink; blinkTimer = 0 }
+
+      if (blink) {
+        ctx.fillStyle = "#00ff41"
+        ctx.font = "14px monospace"
+        ctx.fillText("[ PRESS ENTER TO START ]", 400, 420)
+      }
+
+      // Controles
+      ctx.fillStyle = "rgba(0,255,65,0.25)"
+      ctx.font = "11px monospace"
+      ctx.fillText("↑ ↓ ← → mover   E interactuar   X cerrar", 400, 560)
+    }
+
+    let animId: number
+    const loop = () => {
+      drawIntro()
+      animId = requestAnimationFrame(loop)
+    }
+    loop()
+
+    const handleEnter = (e: KeyboardEvent) => {
+      if (e.key === "Enter") setStarted(true)
+    }
+    window.addEventListener("keydown", handleEnter)
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener("keydown", handleEnter)
+    }
+  }, [started])
+
+  // Juego principal
+  useEffect(() => {
+    if (!started) return
+
+    const canvas = canvasRef.current!
+    const ctx = canvas.getContext("2d")!
     canvas.focus()
 
     const player = { x: 400, y: 300, speed: 3, dir: "down", moving: false, frame: 0 }
@@ -51,36 +138,26 @@ export default function Home() {
     const drawPlayer = (x: number, y: number, dir: string, frame: number) => {
       const f = frame % 2
 
-      // Sombra
       ctx.fillStyle = "rgba(0,0,0,0.3)"
       ctx.beginPath()
       ctx.ellipse(x, y + 12, 10, 4, 0, 0, Math.PI * 2)
       ctx.fill()
 
-      // Piernas animadas
       ctx.fillStyle = "#1a6b1a"
       if (dir === "down" || dir === "up") {
         ctx.fillRect(x - 6, y, 5, 10)
         ctx.fillRect(x + 1, y, 5, 10)
-        if (f === 1) {
-          ctx.fillRect(x - 6, y + 8, 5, 4)
-        } else {
-          ctx.fillRect(x + 1, y + 8, 5, 4)
-        }
+        if (f === 1) ctx.fillRect(x - 6, y + 8, 5, 4)
+        else ctx.fillRect(x + 1, y + 8, 5, 4)
       } else {
         ctx.fillRect(x - 4, y, 8, 10)
-        if (f === 1) {
-          ctx.fillRect(x - 6, y + 6, 5, 6)
-        } else {
-          ctx.fillRect(x + 1, y + 6, 5, 6)
-        }
+        if (f === 1) ctx.fillRect(x - 6, y + 6, 5, 6)
+        else ctx.fillRect(x + 1, y + 6, 5, 6)
       }
 
-      // Cuerpo
       ctx.fillStyle = "#2d4a2d"
       ctx.fillRect(x - 8, y - 10, 16, 12)
 
-      // Brazos
       ctx.fillStyle = "#1a6b1a"
       if (f === 0) {
         ctx.fillRect(x - 12, y - 8, 4, 8)
@@ -90,16 +167,13 @@ export default function Home() {
         ctx.fillRect(x + 8, y - 8, 4, 8)
       }
 
-      // Cabeza
       ctx.fillStyle = "#f5c5a3"
       ctx.fillRect(x - 6, y - 20, 12, 12)
 
-      // Gorra
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(x - 7, y - 22, 14, 4)
       ctx.fillRect(x - 5, y - 26, 10, 4)
 
-      // Ojos
       ctx.fillStyle = "#000"
       if (dir === "down") {
         ctx.fillRect(x - 4, y - 16, 2, 2)
@@ -115,11 +189,9 @@ export default function Home() {
     }
 
     const draw = () => {
-      // Piso
       ctx.fillStyle = "#1a1208"
       ctx.fillRect(0, 0, 800, 600)
 
-      // Textura piso
       for (let x = 0; x < 800; x += 32) {
         for (let y = 0; y < 600; y += 32) {
           ctx.strokeStyle = "rgba(255,200,100,0.06)"
@@ -128,14 +200,12 @@ export default function Home() {
         }
       }
 
-      // Luz jugador
       const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
       lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
       lightGradient.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = lightGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      // Luz objetos
       objects.forEach(obj => {
         const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
         objLight.addColorStop(0, "rgba(0,255,65,0.04)")
@@ -144,18 +214,15 @@ export default function Home() {
         ctx.fillRect(0, 0, 800, 600)
       })
 
-      // Oscuridad esquinas
       const darkGradient = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
       darkGradient.addColorStop(0, "rgba(0,0,0,0)")
       darkGradient.addColorStop(1, "rgba(0,0,0,0.5)")
       ctx.fillStyle = darkGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      // Pared superior
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
 
-      // Nombre
       ctx.fillStyle = "#00ff41"
       ctx.font = "bold 18px monospace"
       ctx.textAlign = "center"
@@ -167,16 +234,13 @@ export default function Home() {
       ctx.fillRect(60, 30, 200, 1)
       ctx.fillRect(540, 30, 200, 1)
 
-      // Borde pared
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(0, 80, 800, 2)
 
-      // Esquinas
       ctx.fillStyle = "#333"
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
 
-      // Computador
       const drawPC = (x: number, y: number) => {
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 18, y + 6, 40, 6)
@@ -196,7 +260,6 @@ export default function Home() {
         ctx.fillText("proyectos", x, y + 24)
       }
 
-      // Estantería
       const drawShelf = (x: number, y: number) => {
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 20, y + 22, 44, 6)
@@ -215,7 +278,6 @@ export default function Home() {
         ctx.fillText("sobre mi", x, y + 36)
       }
 
-      // Teléfono
       const drawPhone = (x: number, y: number) => {
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 10, y + 18, 24, 6)
@@ -238,10 +300,8 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
-      // Jugador
       drawPlayer(player.x, player.y, player.dir, player.frame)
 
-      // Hint
       const near = objects.find(obj => {
         const dx = player.x - obj.x
         const dy = player.y - obj.y
@@ -266,13 +326,9 @@ export default function Home() {
       if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up"; player.moving = true }
       else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down"; player.moving = true }
 
-      // Animación frames
       if (player.moving) {
         frameTimer++
-        if (frameTimer > 8) {
-          player.frame++
-          frameTimer = 0
-        }
+        if (frameTimer > 8) { player.frame++; frameTimer = 0 }
       } else {
         player.frame = 0
       }
@@ -289,10 +345,10 @@ export default function Home() {
       draw()
       animId = requestAnimationFrame(loop)
     }
-
     loop()
+
     return () => cancelAnimationFrame(animId)
-  }, [])
+  }, [started])
 
   return (
     <main className="flex items-center justify-center min-h-screen bg-black">
