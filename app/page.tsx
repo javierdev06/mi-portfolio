@@ -14,7 +14,6 @@ export default function Home() {
   closePanelFn = () => setActiveSection(null)
   openPanelFn = (s: string) => setActiveSection(s)
 
-  // Pantalla de inicio
   useEffect(() => {
     if (started) return
     const canvas = canvasRef.current!
@@ -27,7 +26,6 @@ export default function Home() {
       ctx.fillStyle = "#060606"
       ctx.fillRect(0, 0, 800, 600)
 
-      // Grid fondo
       for (let x = 0; x < 800; x += 32) {
         for (let y = 0; y < 600; y += 32) {
           ctx.strokeStyle = "rgba(0,255,65,0.04)"
@@ -36,35 +34,29 @@ export default function Home() {
         }
       }
 
-      // Glow central
       const glow = ctx.createRadialGradient(400, 300, 0, 400, 300, 300)
       glow.addColorStop(0, "rgba(0,255,65,0.08)")
       glow.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = glow
       ctx.fillRect(0, 0, 800, 600)
 
-      // Título
       ctx.fillStyle = "#00ff41"
       ctx.font = "bold 48px monospace"
       ctx.textAlign = "center"
-      ctx.fillText("JAVIER CORTÉS", 400, 220)
+      ctx.fillText("JAVIER CORTES", 400, 220)
 
-      // Subtítulo
-      ctx.fillStyle = "rgba(0,255,65,0.5)"
+      ctx.fillStyle = "rgba(0,255,65,0.8)"
       ctx.font = "16px monospace"
       ctx.fillText("full stack developer · portfolio", 400, 260)
 
-      // Líneas decorativas
       ctx.fillStyle = "rgba(0,255,65,0.3)"
       ctx.fillRect(100, 280, 600, 1)
 
-      // Info
-      ctx.fillStyle = "rgba(0,255,65,0.4)"
+      ctx.fillStyle = "rgba(0,255,65,0.7)"
       ctx.font = "12px monospace"
       ctx.fillText("Python · Flask · JavaScript · React · Next.js", 400, 310)
-      ctx.fillText("Chile 🇨🇱 · disponible para proyectos", 400, 335)
+      ctx.fillText("Chile · disponible para proyectos", 400, 335)
 
-      // Press enter parpadeante
       blinkTimer++
       if (blinkTimer > 30) { blink = !blink; blinkTimer = 0 }
 
@@ -74,31 +66,21 @@ export default function Home() {
         ctx.fillText("[ PRESS ENTER TO START ]", 400, 420)
       }
 
-      // Controles
       ctx.fillStyle = "rgba(0,255,65,0.25)"
       ctx.font = "11px monospace"
-      ctx.fillText("↑ ↓ ← → mover   E interactuar   X cerrar", 400, 560)
+      ctx.fillText("flechas mover   E interactuar   X cerrar", 400, 560)
     }
 
     let animId: number
-    const loop = () => {
-      drawIntro()
-      animId = requestAnimationFrame(loop)
-    }
+    const loop = () => { drawIntro(); animId = requestAnimationFrame(loop) }
     loop()
 
-    const handleEnter = (e: KeyboardEvent) => {
-      if (e.key === "Enter") setStarted(true)
-    }
+    const handleEnter = (e: KeyboardEvent) => { if (e.key === "Enter") setStarted(true) }
     window.addEventListener("keydown", handleEnter)
 
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener("keydown", handleEnter)
-    }
+    return () => { cancelAnimationFrame(animId); window.removeEventListener("keydown", handleEnter) }
   }, [started])
 
-  // Juego principal
   useEffect(() => {
     if (!started) return
 
@@ -107,6 +89,7 @@ export default function Home() {
     canvas.focus()
 
     const player = { x: 400, y: 300, speed: 3, dir: "down", moving: false, frame: 0 }
+    const npc = { x: 600, y: 400, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
     const keys: Record<string, boolean> = {}
     let frameTimer = 0
 
@@ -114,6 +97,7 @@ export default function Home() {
       { x: 150, y: 150, label: "proyectos" },
       { x: 400, y: 150, label: "sobre mi" },
       { x: 650, y: 150, label: "contacto" },
+      { x: 600, y: 400, label: "npc" },
     ]
 
     const isOpen = () => document.querySelector("[data-panel]") !== null
@@ -128,14 +112,15 @@ export default function Home() {
         })
         if (near) openPanelFn?.(near.label)
       }
-      if ((e.key === "x" || e.key === "X") && isOpen()) {
-        closePanelFn?.()
-      }
+      if ((e.key === "x" || e.key === "X") && isOpen()) closePanelFn?.()
     })
 
     window.addEventListener("keyup", (e) => { keys[e.key] = false })
 
-    const drawPlayer = (x: number, y: number, dir: string, frame: number) => {
+    const drawCharacter = (
+      x: number, y: number, dir: string, frame: number,
+      bodyColor: string, headColor: string, capColor: string
+    ) => {
       const f = frame % 2
 
       ctx.fillStyle = "rgba(0,0,0,0.3)"
@@ -143,7 +128,7 @@ export default function Home() {
       ctx.ellipse(x, y + 12, 10, 4, 0, 0, Math.PI * 2)
       ctx.fill()
 
-      ctx.fillStyle = "#1a6b1a"
+      ctx.fillStyle = bodyColor
       if (dir === "down" || dir === "up") {
         ctx.fillRect(x - 6, y, 5, 10)
         ctx.fillRect(x + 1, y, 5, 10)
@@ -155,10 +140,9 @@ export default function Home() {
         else ctx.fillRect(x + 1, y + 6, 5, 6)
       }
 
-      ctx.fillStyle = "#2d4a2d"
+      ctx.fillStyle = bodyColor
       ctx.fillRect(x - 8, y - 10, 16, 12)
 
-      ctx.fillStyle = "#1a6b1a"
       if (f === 0) {
         ctx.fillRect(x - 12, y - 8, 4, 8)
         ctx.fillRect(x + 8, y - 10, 4, 8)
@@ -167,10 +151,10 @@ export default function Home() {
         ctx.fillRect(x + 8, y - 8, 4, 8)
       }
 
-      ctx.fillStyle = "#f5c5a3"
+      ctx.fillStyle = headColor
       ctx.fillRect(x - 6, y - 20, 12, 12)
 
-      ctx.fillStyle = "#00ff41"
+      ctx.fillStyle = capColor
       ctx.fillRect(x - 7, y - 22, 14, 4)
       ctx.fillRect(x - 5, y - 26, 10, 4)
 
@@ -206,7 +190,7 @@ export default function Home() {
       ctx.fillStyle = lightGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      objects.forEach(obj => {
+      objects.slice(0, 3).forEach(obj => {
         const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
         objLight.addColorStop(0, "rgba(0,255,65,0.04)")
         objLight.addColorStop(1, "rgba(0,0,0,0)")
@@ -226,8 +210,8 @@ export default function Home() {
       ctx.fillStyle = "#00ff41"
       ctx.font = "bold 18px monospace"
       ctx.textAlign = "center"
-      ctx.fillText("JAVIER CORTÉS", 400, 35)
-      ctx.fillStyle = "rgba(0,255,65,0.4)"
+      ctx.fillText("JAVIER CORTES", 400, 35)
+      ctx.fillStyle = "rgba(0,255,65,0.7)"
       ctx.font = "11px monospace"
       ctx.fillText("full stack developer · portfolio", 400, 55)
       ctx.fillStyle = "rgba(0,255,65,0.2)"
@@ -300,9 +284,25 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
-      drawPlayer(player.x, player.y, player.dir, player.frame)
+      // NPC
+      drawCharacter(npc.x, npc.y, npc.dir, npc.frame, "#4444aa", "#f5c5a3", "#ffaa00")
 
-      const near = objects.find(obj => {
+      // Burbuja NPC
+      const npcDist = Math.sqrt((player.x - npc.x) ** 2 + (player.y - npc.y) ** 2)
+      if (npcDist < 70) {
+        ctx.fillStyle = "rgba(0,0,0,0.8)"
+        ctx.fillRect(npc.x - 40, npc.y - 50, 80, 20)
+        ctx.fillStyle = "#ffaa00"
+        ctx.font = "9px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText("[ E ] hablar", npc.x, npc.y - 36)
+      }
+
+      // Jugador
+      drawCharacter(player.x, player.y, player.dir, player.frame, "#2d4a2d", "#f5c5a3", "#00ff41")
+
+      // Hint objetos
+      const near = objects.slice(0, 3).find(obj => {
         const dx = player.x - obj.x
         const dy = player.y - obj.y
         return Math.sqrt(dx*dx + dy*dy) < 70
@@ -314,6 +314,35 @@ export default function Home() {
         ctx.textAlign = "center"
         ctx.fillText(`[E] ver ${near.label}`, 400, 580)
       }
+    }
+
+    const updateNPC = () => {
+      npc.moveTimer++
+      if (npc.moveTimer > 60) {
+        npc.moveTimer = 0
+        const dirs = [
+          { dx: 2, dy: 0, dir: "right" },
+          { dx: -2, dy: 0, dir: "left" },
+          { dx: 0, dy: 2, dir: "down" },
+          { dx: 0, dy: -2, dir: "up" },
+        ]
+        const chosen = dirs[Math.floor(Math.random() * dirs.length)]
+        npc.dx = chosen.dx
+        npc.dy = chosen.dy
+        npc.dir = chosen.dir
+      }
+
+      npc.x += npc.dx
+      npc.y += npc.dy
+      npc.frame++
+
+      if (npc.x < 50) { npc.x = 50; npc.dx = 2; npc.dir = "right" }
+      if (npc.x > 750) { npc.x = 750; npc.dx = -2; npc.dir = "left" }
+      if (npc.y < 100) { npc.y = 100; npc.dy = 2; npc.dir = "down" }
+      if (npc.y > 560) { npc.y = 560; npc.dy = -2; npc.dir = "up" }
+
+      objects[3].x = npc.x
+      objects[3].y = npc.y
     }
 
     const update = () => {
@@ -333,6 +362,8 @@ export default function Home() {
         player.frame = 0
       }
 
+      updateNPC()
+
       if (player.x < 30) player.x = 30
       if (player.x > 770) player.x = 770
       if (player.y < 95) player.y = 95
@@ -340,11 +371,7 @@ export default function Home() {
     }
 
     let animId: number
-    const loop = () => {
-      update()
-      draw()
-      animId = requestAnimationFrame(loop)
-    }
+    const loop = () => { update(); draw(); animId = requestAnimationFrame(loop) }
     loop()
 
     return () => cancelAnimationFrame(animId)

@@ -20,7 +20,7 @@ export default function Panel({ section, onClose }: PanelProps) {
               Provisiones El Retiro
             </p>
             <span style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,65,0.3)", padding: "2px 8px", borderRadius: 3 }}>
-              producción
+              produccion
             </span>
           </div>
           <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
@@ -31,8 +31,8 @@ export default function Panel({ section, onClose }: PanelProps) {
           </p>
         </div>
         <div style={{ border: "1px solid rgba(255,255,255,0.05)", padding: 16, borderRadius: 4, opacity: 0.4 }}>
-          <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13 }}>Próximo proyecto</p>
-          <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>En construcción...</p>
+          <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13 }}>Proximo proyecto</p>
+          <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>En construccion...</p>
         </div>
       </div>
     ),
@@ -42,10 +42,10 @@ export default function Panel({ section, onClose }: PanelProps) {
           $ cat javier.json
         </p>
         <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
-          <p><span style={{ color: "#7a9e7a" }}>"nombre"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Javier Cortés"</span></p>
+          <p><span style={{ color: "#7a9e7a" }}>"nombre"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Javier Cortes"</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"rol"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Full Stack Developer"</span></p>
-          <p><span style={{ color: "#7a9e7a" }}>"ubicación"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Chile 🇨🇱"</span></p>
-          <p><span style={{ color: "#7a9e7a" }}>"experiencia"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>"1.5 años"</span></p>
+          <p><span style={{ color: "#7a9e7a" }}>"ubicacion"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Chile"</span></p>
+          <p><span style={{ color: "#7a9e7a" }}>"experiencia"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>"1.5 anos"</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"stack"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#e8c46a" }}>["Python", "Flask", "JS", "React"]</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"disponible"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>true</span></p>
         </div>
@@ -58,20 +58,37 @@ export default function Panel({ section, onClose }: PanelProps) {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <a href="mailto:javier.dev06@gmail.com" style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, border: "1px solid rgba(0,255,65,0.2)", borderRadius: 4, textDecoration: "none" }}>
-            <span style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 16 }}>✉</span>
+            <span style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 16 }}>@</span>
             <div>
               <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 10, marginBottom: 2 }}>email</p>
               <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 13 }}>javier.dev06@gmail.com</p>
             </div>
           </a>
           <a href="https://github.com/javierdev06" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 12, padding: 12, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, textDecoration: "none" }}>
-            <span style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 16 }}>◈</span>
+            <span style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 16 }}>#</span>
             <div>
               <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 10, marginBottom: 2 }}>github</p>
               <p style={{ color: "#e8ffe8", fontFamily: "monospace", fontSize: 13 }}>github.com/javierdev06</p>
             </div>
           </a>
         </div>
+      </div>
+    ),
+    "npc": (
+      <div>
+        <p style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.7 }}>
+          $ ./asistente --talk
+        </p>
+        <p style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
+          Hola, soy el asistente de Javier.
+        </p>
+        <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
+          Explora la habitacion interactuando con los objetos:<br/><br/>
+          - Computador: proyectos reales<br/>
+          - Estanteria: sobre Javier<br/>
+          - Telefono: contacto directo<br/><br/>
+          Presiona X para cerrar este mensaje.
+        </p>
       </div>
     ),
   }
@@ -93,7 +110,6 @@ export default function Panel({ section, onClose }: PanelProps) {
         position: "relative",
         overflow: "hidden"
       }}>
-        {/* Barra titulo terminal */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -112,8 +128,6 @@ export default function Panel({ section, onClose }: PanelProps) {
             presiona X para cerrar
           </span>
         </div>
-
-        {/* Contenido */}
         <div style={{ padding: 24 }}>
           {content[section]}
         </div>
