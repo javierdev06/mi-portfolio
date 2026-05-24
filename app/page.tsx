@@ -19,8 +19,9 @@ export default function Home() {
 
     canvas.focus()
 
-    const player = { x: 400, y: 300, size: 20, speed: 3, dir: "down" }
+    const player = { x: 400, y: 300, speed: 3, dir: "down", moving: false, frame: 0 }
     const keys: Record<string, boolean> = {}
+    let frameTimer = 0
 
     const objects = [
       { x: 150, y: 150, label: "proyectos" },
@@ -32,7 +33,6 @@ export default function Home() {
 
     window.addEventListener("keydown", (e) => {
       keys[e.key] = true
-
       if ((e.key === "e" || e.key === "E") && !isOpen()) {
         const near = objects.find(obj => {
           const dx = player.x - obj.x
@@ -41,13 +41,78 @@ export default function Home() {
         })
         if (near) openPanelFn?.(near.label)
       }
-
       if ((e.key === "x" || e.key === "X") && isOpen()) {
         closePanelFn?.()
       }
     })
 
     window.addEventListener("keyup", (e) => { keys[e.key] = false })
+
+    const drawPlayer = (x: number, y: number, dir: string, frame: number) => {
+      const f = frame % 2
+
+      // Sombra
+      ctx.fillStyle = "rgba(0,0,0,0.3)"
+      ctx.beginPath()
+      ctx.ellipse(x, y + 12, 10, 4, 0, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Piernas animadas
+      ctx.fillStyle = "#1a6b1a"
+      if (dir === "down" || dir === "up") {
+        ctx.fillRect(x - 6, y, 5, 10)
+        ctx.fillRect(x + 1, y, 5, 10)
+        if (f === 1) {
+          ctx.fillRect(x - 6, y + 8, 5, 4)
+        } else {
+          ctx.fillRect(x + 1, y + 8, 5, 4)
+        }
+      } else {
+        ctx.fillRect(x - 4, y, 8, 10)
+        if (f === 1) {
+          ctx.fillRect(x - 6, y + 6, 5, 6)
+        } else {
+          ctx.fillRect(x + 1, y + 6, 5, 6)
+        }
+      }
+
+      // Cuerpo
+      ctx.fillStyle = "#2d4a2d"
+      ctx.fillRect(x - 8, y - 10, 16, 12)
+
+      // Brazos
+      ctx.fillStyle = "#1a6b1a"
+      if (f === 0) {
+        ctx.fillRect(x - 12, y - 8, 4, 8)
+        ctx.fillRect(x + 8, y - 10, 4, 8)
+      } else {
+        ctx.fillRect(x - 12, y - 10, 4, 8)
+        ctx.fillRect(x + 8, y - 8, 4, 8)
+      }
+
+      // Cabeza
+      ctx.fillStyle = "#f5c5a3"
+      ctx.fillRect(x - 6, y - 20, 12, 12)
+
+      // Gorra
+      ctx.fillStyle = "#00ff41"
+      ctx.fillRect(x - 7, y - 22, 14, 4)
+      ctx.fillRect(x - 5, y - 26, 10, 4)
+
+      // Ojos
+      ctx.fillStyle = "#000"
+      if (dir === "down") {
+        ctx.fillRect(x - 4, y - 16, 2, 2)
+        ctx.fillRect(x + 2, y - 16, 2, 2)
+      } else if (dir === "up") {
+        ctx.fillRect(x - 3, y - 18, 2, 2)
+        ctx.fillRect(x + 1, y - 18, 2, 2)
+      } else if (dir === "left") {
+        ctx.fillRect(x - 5, y - 16, 2, 2)
+      } else if (dir === "right") {
+        ctx.fillRect(x + 3, y - 16, 2, 2)
+      }
+    }
 
     const draw = () => {
       // Piso
@@ -63,29 +128,23 @@ export default function Home() {
         }
       }
 
-      // Luz del jugador en el piso
-      const lightGradient = ctx.createRadialGradient(
-        player.x, player.y, 0,
-        player.x, player.y, 120
-      )
+      // Luz jugador
+      const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
       lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
       lightGradient.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = lightGradient
       ctx.fillRect(0, 0, 800, 600)
 
-      // Luz en los objetos
+      // Luz objetos
       objects.forEach(obj => {
-        const objLight = ctx.createRadialGradient(
-          obj.x, obj.y, 0,
-          obj.x, obj.y, 80
-        )
+        const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
         objLight.addColorStop(0, "rgba(0,255,65,0.04)")
         objLight.addColorStop(1, "rgba(0,0,0,0)")
         ctx.fillStyle = objLight
         ctx.fillRect(0, 0, 800, 600)
       })
 
-      // Oscuridad en esquinas
+      // Oscuridad esquinas
       const darkGradient = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
       darkGradient.addColorStop(0, "rgba(0,0,0,0)")
       darkGradient.addColorStop(1, "rgba(0,0,0,0.5)")
@@ -96,17 +155,14 @@ export default function Home() {
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
 
-      // Nombre en la pared
+      // Nombre
       ctx.fillStyle = "#00ff41"
       ctx.font = "bold 18px monospace"
       ctx.textAlign = "center"
       ctx.fillText("JAVIER CORTÉS", 400, 35)
-
       ctx.fillStyle = "rgba(0,255,65,0.4)"
       ctx.font = "11px monospace"
       ctx.fillText("full stack developer · portfolio", 400, 55)
-
-      // Líneas decorativas
       ctx.fillStyle = "rgba(0,255,65,0.2)"
       ctx.fillRect(60, 30, 200, 1)
       ctx.fillRect(540, 30, 200, 1)
@@ -120,12 +176,10 @@ export default function Home() {
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
 
-      // Computador (proyectos)
+      // Computador
       const drawPC = (x: number, y: number) => {
-        // Sombra
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 18, y + 6, 40, 6)
-
         ctx.fillStyle = "#222"
         ctx.fillRect(x - 20, y - 24, 40, 28)
         ctx.fillStyle = "#0a2a0a"
@@ -142,12 +196,10 @@ export default function Home() {
         ctx.fillText("proyectos", x, y + 24)
       }
 
-      // Estantería (sobre mi)
+      // Estantería
       const drawShelf = (x: number, y: number) => {
-        // Sombra
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 20, y + 22, 44, 6)
-
         ctx.fillStyle = "#5c3d1e"
         ctx.fillRect(x - 22, y - 28, 44, 4)
         ctx.fillRect(x - 22, y - 4, 44, 4)
@@ -163,12 +215,10 @@ export default function Home() {
         ctx.fillText("sobre mi", x, y + 36)
       }
 
-      // Teléfono (contacto)
+      // Teléfono
       const drawPhone = (x: number, y: number) => {
-        // Sombra
         ctx.fillStyle = "rgba(0,0,0,0.4)"
         ctx.fillRect(x - 10, y + 18, 24, 6)
-
         ctx.fillStyle = "#222"
         ctx.fillRect(x - 12, y - 24, 24, 40)
         ctx.fillStyle = "#001a33"
@@ -188,27 +238,8 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
-      // Cuerpo jugador
-      ctx.fillStyle = "#00ff41"
-      ctx.fillRect(player.x - 8, player.y - 8, 16, 20)
-
-      // Cabeza
-      ctx.fillStyle = "#00cc33"
-      ctx.fillRect(player.x - 6, player.y - 18, 12, 12)
-
-      // Ojos según dirección
-      ctx.fillStyle = "#000"
-      if (player.dir === "down") {
-        ctx.fillRect(player.x - 4, player.y - 14, 3, 3)
-        ctx.fillRect(player.x + 1, player.y - 14, 3, 3)
-      } else if (player.dir === "up") {
-        ctx.fillRect(player.x - 4, player.y - 16, 3, 3)
-        ctx.fillRect(player.x + 1, player.y - 16, 3, 3)
-      } else if (player.dir === "left") {
-        ctx.fillRect(player.x - 5, player.y - 14, 3, 3)
-      } else if (player.dir === "right") {
-        ctx.fillRect(player.x + 2, player.y - 14, 3, 3)
-      }
+      // Jugador
+      drawPlayer(player.x, player.y, player.dir, player.frame)
 
       // Hint
       const near = objects.find(obj => {
@@ -228,10 +259,23 @@ export default function Home() {
     const update = () => {
       if (isOpen()) return
 
-      if (keys["ArrowLeft"]) { player.x -= player.speed; player.dir = "left" }
-      else if (keys["ArrowRight"]) { player.x += player.speed; player.dir = "right" }
-      if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up" }
-      else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down" }
+      player.moving = false
+
+      if (keys["ArrowLeft"]) { player.x -= player.speed; player.dir = "left"; player.moving = true }
+      else if (keys["ArrowRight"]) { player.x += player.speed; player.dir = "right"; player.moving = true }
+      if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up"; player.moving = true }
+      else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down"; player.moving = true }
+
+      // Animación frames
+      if (player.moving) {
+        frameTimer++
+        if (frameTimer > 8) {
+          player.frame++
+          frameTimer = 0
+        }
+      } else {
+        player.frame = 0
+      }
 
       if (player.x < 30) player.x = 30
       if (player.x > 770) player.x = 770
