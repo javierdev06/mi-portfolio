@@ -19,7 +19,7 @@ export default function Home() {
 
     canvas.focus()
 
-    const player = { x: 400, y: 300, size: 20, speed: 3 }
+    const player = { x: 400, y: 300, size: 20, speed: 3, dir: "down" }
     const keys: Record<string, boolean> = {}
 
     const objects = [
@@ -67,7 +67,7 @@ export default function Home() {
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
 
-      // Borde entre pared y piso
+      // Borde pared
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(0, 80, 800, 2)
 
@@ -86,9 +86,27 @@ export default function Home() {
         ctx.fillText(obj.label, obj.x, obj.y + obj.size/2 + 16)
       })
 
-      // Jugador
+      // Cuerpo jugador
       ctx.fillStyle = "#00ff41"
-      ctx.fillRect(player.x - 12, player.y - 12, 24, 24)
+      ctx.fillRect(player.x - 8, player.y - 8, 16, 20)
+
+      // Cabeza
+      ctx.fillStyle = "#00cc33"
+      ctx.fillRect(player.x - 6, player.y - 18, 12, 12)
+
+      // Ojos según dirección
+      ctx.fillStyle = "#000"
+      if (player.dir === "down") {
+        ctx.fillRect(player.x - 4, player.y - 14, 3, 3)
+        ctx.fillRect(player.x + 1, player.y - 14, 3, 3)
+      } else if (player.dir === "up") {
+        ctx.fillRect(player.x - 4, player.y - 16, 3, 3)
+        ctx.fillRect(player.x + 1, player.y - 16, 3, 3)
+      } else if (player.dir === "left") {
+        ctx.fillRect(player.x - 5, player.y - 14, 3, 3)
+      } else if (player.dir === "right") {
+        ctx.fillRect(player.x + 2, player.y - 14, 3, 3)
+      }
 
       // Hint
       const near = objects.find(obj => {
@@ -107,10 +125,10 @@ export default function Home() {
 
     const update = () => {
       if (isOpen()) return
-      if (keys["ArrowLeft"]) player.x -= player.speed
-      if (keys["ArrowRight"]) player.x += player.speed
-      if (keys["ArrowUp"]) player.y -= player.speed
-      if (keys["ArrowDown"]) player.y += player.speed
+      if (keys["ArrowLeft"]) { player.x -= player.speed; player.dir = "left" }
+      else if (keys["ArrowRight"]) { player.x += player.speed; player.dir = "right" }
+      if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up" }
+      else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down" }
     }
 
     let animId: number
