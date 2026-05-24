@@ -23,9 +23,9 @@ export default function Home() {
     const keys: Record<string, boolean> = {}
 
     const objects = [
-      { x: 150, y: 150, size: 40, color: "#4444ff", label: "proyectos" },
-      { x: 400, y: 150, size: 40, color: "#ffaa00", label: "sobre mi" },
-      { x: 650, y: 150, size: 40, color: "#ff4444", label: "contacto" },
+      { x: 150, y: 150, label: "proyectos" },
+      { x: 400, y: 150, label: "sobre mi" },
+      { x: 650, y: 150, label: "contacto" },
     ]
 
     const isOpen = () => document.querySelector("[data-panel]") !== null
@@ -67,6 +67,22 @@ export default function Home() {
       ctx.fillStyle = "#0d0d0d"
       ctx.fillRect(0, 0, 800, 80)
 
+      // Nombre en la pared
+      ctx.fillStyle = "#00ff41"
+      ctx.font = "bold 18px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("JAVIER CORTÉS", 400, 35)
+
+      ctx.fillStyle = "rgba(0,255,65,0.4)"
+      ctx.font = "11px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("full stack developer · portfolio", 400, 55)
+
+      // Líneas decorativas
+      ctx.fillStyle = "rgba(0,255,65,0.2)"
+      ctx.fillRect(60, 30, 200, 1)
+      ctx.fillRect(540, 30, 200, 1)
+
       // Borde pared
       ctx.fillStyle = "#00ff41"
       ctx.fillRect(0, 80, 800, 2)
@@ -76,15 +92,61 @@ export default function Home() {
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
 
-      // Objetos
-      objects.forEach(obj => {
-        ctx.fillStyle = obj.color
-        ctx.fillRect(obj.x - obj.size/2, obj.y - obj.size/2, obj.size, obj.size)
+      // Computador (proyectos)
+      const drawPC = (x: number, y: number) => {
+        ctx.fillStyle = "#222"
+        ctx.fillRect(x - 20, y - 24, 40, 28)
+        ctx.fillStyle = "#0a2a0a"
+        ctx.fillRect(x - 16, y - 20, 32, 20)
+        ctx.fillStyle = "#00ff41"
+        ctx.font = "6px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText(">_", x, y - 8)
+        ctx.fillStyle = "#333"
+        ctx.fillRect(x - 4, y + 4, 8, 4)
+        ctx.fillRect(x - 10, y + 8, 20, 3)
+        ctx.fillStyle = "#ffffff"
+        ctx.font = "10px monospace"
+        ctx.fillText("proyectos", x, y + 24)
+      }
+
+      // Estantería (sobre mi)
+      const drawShelf = (x: number, y: number) => {
+        ctx.fillStyle = "#5c3d1e"
+        ctx.fillRect(x - 22, y - 28, 44, 4)
+        ctx.fillRect(x - 22, y - 4, 44, 4)
+        ctx.fillRect(x - 22, y + 20, 44, 4)
+        const books = ["#ff4444", "#4444ff", "#ffaa00", "#00ff41", "#ff44ff"]
+        books.forEach((color, i) => {
+          ctx.fillStyle = color
+          ctx.fillRect(x - 18 + i * 9, y - 24, 7, 20)
+        })
         ctx.fillStyle = "#ffffff"
         ctx.font = "10px monospace"
         ctx.textAlign = "center"
-        ctx.fillText(obj.label, obj.x, obj.y + obj.size/2 + 16)
-      })
+        ctx.fillText("sobre mi", x, y + 36)
+      }
+
+      // Teléfono (contacto)
+      const drawPhone = (x: number, y: number) => {
+        ctx.fillStyle = "#222"
+        ctx.fillRect(x - 12, y - 24, 24, 40)
+        ctx.fillStyle = "#001a33"
+        ctx.fillRect(x - 9, y - 20, 18, 28)
+        ctx.fillStyle = "#444"
+        ctx.fillRect(x - 4, y + 12, 8, 4)
+        ctx.fillStyle = "#00ff41"
+        ctx.font = "8px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText("@", x, y - 4)
+        ctx.fillStyle = "#ffffff"
+        ctx.font = "10px monospace"
+        ctx.fillText("contacto", x, y + 26)
+      }
+
+      drawPC(150, 150)
+      drawShelf(400, 150)
+      drawPhone(650, 150)
 
       // Cuerpo jugador
       ctx.fillStyle = "#00ff41"
@@ -131,7 +193,6 @@ export default function Home() {
       if (keys["ArrowUp"]) { player.y -= player.speed; player.dir = "up" }
       else if (keys["ArrowDown"]) { player.y += player.speed; player.dir = "down" }
 
-      // Límites habitación
       if (player.x < 30) player.x = 30
       if (player.x > 770) player.x = 770
       if (player.y < 95) player.y = 95
