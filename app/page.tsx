@@ -9,13 +9,14 @@ let getVisited: (() => string[]) | null = null
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const matrixRef = useRef<HTMLCanvasElement>(null)
   const [activeSection, setActiveSection] = useState<string | null>(null)
   const [started, setStarted] = useState(false)
   const [muted, setMuted] = useState(false)
-  const [visited, setVisited] = useState<string[]>([])
   const audioCtxRef = useRef<AudioContext | null>(null)
   const musicGainRef = useRef<GainNode | null>(null)
   const visitedRef = useRef<string[]>([])
+  const [visited, setVisited] = useState<string[]>([])
 
   closePanelFn = () => setActiveSection(null)
   openPanelFn = (s: string) => setActiveSection(s)
@@ -125,6 +126,50 @@ export default function Home() {
     setInterval(playBeat, 350)
   }
 
+  // Matrix effect en canvas lateral
+  useEffect(() => {
+    if (!started) return
+    const canvas = matrixRef.current!
+    const ctx = canvas.getContext("2d")!
+    const W = canvas.width
+    const H = canvas.height
+    const fontSize = 12
+    const cols = Math.floor(W / fontSize)
+    const drops = Array(cols).fill(1)
+
+    const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホ{}[]<>/\\|=+-*&%$#@!?"
+
+    const drawMatrix = () => {
+      ctx.fillStyle = "rgba(0,0,0,0.05)"
+      ctx.fillRect(0, 0, W, H)
+
+      ctx.font = `${fontSize}px monospace`
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)]
+        const x = i * fontSize
+        const y = drops[i] * fontSize
+
+        // Primer caracter mas brillante
+        if (drops[i] * fontSize < H && Math.random() > 0.95) {
+          ctx.fillStyle = "#ffffff"
+        } else {
+          ctx.fillStyle = `rgba(0,255,65,${Math.random() * 0.5 + 0.1})`
+        }
+
+        ctx.fillText(char, x, y)
+
+        if (y > H && Math.random() > 0.975) {
+          drops[i] = 0
+        }
+        drops[i]++
+      }
+    }
+
+    const interval = setInterval(drawMatrix, 50)
+    return () => clearInterval(interval)
+  }, [started])
+
   useEffect(() => {
     if (started) return
     const canvas = canvasRef.current!
@@ -172,7 +217,7 @@ export default function Home() {
       if (blink) {
         ctx.fillStyle = "#00ff41"
         ctx.font = "14px monospace"
-        ctx.fillText("[ PRESS ENTER TO START ]", 400, 420)
+        ctx.fillText("[ PRESIONA ENTER PARA COMENZAR ]", 400, 420)
       }
 
       ctx.fillStyle = "rgba(0,255,65,0.25)"
@@ -357,22 +402,20 @@ export default function Home() {
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
 
-      // Puerta derecha
-      ctx.fillStyle = "#3a2a0a"
-      ctx.fillRect(770, 255, 20, 120)
-      ctx.fillStyle = "#5c3d1e"
-      ctx.fillRect(772, 257, 16, 116)
       const doorLight = ctx.createRadialGradient(780, 315, 0, 780, 315, 60)
       doorLight.addColorStop(0, "rgba(255,180,50,0.15)")
       doorLight.addColorStop(1, "rgba(0,0,0,0)")
       ctx.fillStyle = doorLight
       ctx.fillRect(0, 0, 800, 600)
+      ctx.fillStyle = "#3a2a0a"
+      ctx.fillRect(770, 255, 20, 120)
+      ctx.fillStyle = "#5c3d1e"
+      ctx.fillRect(772, 257, 16, 116)
       ctx.fillStyle = "#ffaa00"
       ctx.beginPath()
       ctx.arc(774, 315, 3, 0, Math.PI * 2)
       ctx.fill()
 
-      // Objetos
       const drawPC = (x: number, y: number) => {
         const done = visitedRef.current.includes("proyectos")
         ctx.fillStyle = "rgba(0,0,0,0.4)"
@@ -430,8 +473,6 @@ export default function Home() {
         ctx.fillStyle = done ? "#00ff41" : (unlocked ? "#ffffff" : "#444")
         ctx.font = "10px monospace"
         ctx.fillText("contacto", x, y + 26)
-
-        // Candado si no desbloqueado
         if (!unlocked) {
           ctx.fillStyle = "#ff4444"
           ctx.font = "12px monospace"
@@ -443,7 +484,6 @@ export default function Home() {
       drawShelf(400, 150)
       drawPhone(650, 150)
 
-      // NPC
       drawCharacter(npc.x, npc.y, npc.dir, npc.frame, "#4444aa", "#f5c5a3", "#ffaa00")
 
       const npcDist = Math.sqrt((player.x - npc.x) ** 2 + (player.y - npc.y) ** 2)
@@ -456,10 +496,8 @@ export default function Home() {
         ctx.fillText("[ E ] hablar", npc.x, npc.y - 36)
       }
 
-      // Jugador
       drawCharacter(player.x, player.y, player.dir, player.frame, "#2d4a2d", "#f5c5a3", "#00ff41")
 
-      // Hint
       const near = objects.find(obj => {
         const dx = player.x - obj.x
         const dy = player.y - obj.y
@@ -473,7 +511,6 @@ export default function Home() {
         ctx.fillText(`[E] ver ${near.label}`, 400, 580)
       }
 
-      // HUD mision
       const misionItems = [
         { label: "proyectos", done: visitedRef.current.includes("proyectos") },
         { label: "sobre mi", done: visitedRef.current.includes("sobre mi") },
@@ -482,7 +519,7 @@ export default function Home() {
 
       ctx.fillStyle = "rgba(0,0,0,0.5)"
       ctx.fillRect(20, 95, 160, 80)
-      ctx.fillStyle = "rgba(0,255,65,0.3)"
+      ctx.strokeStyle = "rgba(0,255,65,0.3)"
       ctx.strokeRect(20, 95, 160, 80)
       ctx.fillStyle = "#00ff41"
       ctx.font = "9px monospace"
@@ -560,8 +597,8 @@ export default function Home() {
   }, [started])
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-black">
-      <div style={{ position: "relative" }}>
+    <main className="flex items-center min-h-screen bg-black" style={{ gap: 0 }}>
+      <div style={{ position: "relative", flexShrink: 0 }}>
         <canvas ref={canvasRef} width={800} height={600} tabIndex={0} style={{ display: "block" }} />
         {activeSection && (
           <Panel
@@ -598,6 +635,47 @@ export default function Home() {
           </button>
         )}
       </div>
+
+      {/* Panel Matrix lateral */}
+      {started && (
+        <div style={{
+          width: "calc(100vw - 800px)",
+          height: 600,
+          position: "relative",
+          overflow: "hidden",
+          background: "#000",
+          borderLeft: "1px solid rgba(0,255,65,0.1)",
+        }}>
+          <canvas
+            ref={matrixRef}
+            width={400}
+            height={600}
+            style={{ width: "100%", height: "100%", opacity: 0.7 }}
+          />
+          {/* Info encima del matrix */}
+          <div style={{
+            position: "absolute",
+            top: 20,
+            left: 0,
+            right: 0,
+            padding: "0 20px",
+            fontFamily: "monospace",
+            fontSize: 11,
+            color: "rgba(0,255,65,0.6)",
+            lineHeight: 1.8,
+          }}>
+            <p style={{ color: "#00ff41", marginBottom: 8 }}>// sistema activo</p>
+            <p>usuario: javier_cortes</p>
+            <p>rol: full_stack_dev</p>
+            <p>estado: disponible</p>
+            <p style={{ marginTop: 8, color: "rgba(0,255,65,0.4)" }}>$ ping javier.dev</p>
+            <p style={{ color: "rgba(0,255,65,0.3)" }}>... conectando</p>
+            <p style={{ marginTop: 8, color: "rgba(0,255,65,0.4)" }}>$ ls skills/</p>
+            <p style={{ color: "rgba(0,255,65,0.3)" }}>python flask js react</p>
+            <p style={{ color: "rgba(0,255,65,0.3)" }}>sqlite railway vercel</p>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
