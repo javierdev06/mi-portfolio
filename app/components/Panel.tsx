@@ -86,69 +86,56 @@ export default function Panel({ section, onClose }: PanelProps) {
           Explora la habitacion interactuando con los objetos:<br/><br/>
           - Computador: proyectos reales<br/>
           - Estanteria: sobre Javier<br/>
-          - Telefono: contacto directo<br/><br/>
-          Camina a la derecha para ver el stack tecnico.<br/><br/>
-          Presiona X para cerrar este mensaje.
+          - Telefono: contacto directo<br/>
+          - Puerta derecha: stack tecnico<br/><br/>
+          Presiona X para cerrar.
         </p>
       </div>
     ),
-    "frontend": (
+    "stack": (
       <div>
         <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.5 }}>
-          $ cat frontend.txt
+          $ cat stack.txt
         </p>
-        <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
-          <p><span style={{ color: "#4444ff" }}>HTML / CSS</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#4444ff" }}>JavaScript</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#4444ff" }}>React</span><span style={{ color: "#e8c46a" }}> — aprendiendo</span></p>
-          <p><span style={{ color: "#4444ff" }}>Next.js</span><span style={{ color: "#e8c46a" }}> — aprendiendo</span></p>
-          <p><span style={{ color: "#4444ff" }}>Tailwind CSS</span><span style={{ color: "#e8c46a" }}> — aprendiendo</span></p>
-        </div>
-      </div>
-    ),
-    "backend": (
-      <div>
-        <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.5 }}>
-          $ cat backend.txt
-        </p>
-        <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
-          <p><span style={{ color: "#00aa44" }}>Python</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#00aa44" }}>Flask</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#00aa44" }}>REST APIs</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#00aa44" }}>SQLite</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#00aa44" }}>Supabase</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-        </div>
-      </div>
-    ),
-    "deploy": (
-      <div>
-        <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.5 }}>
-          $ cat deploy.txt
-        </p>
-        <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
-          <p><span style={{ color: "#ff6600" }}>Railway</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#ff6600" }}>Vercel</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#ff6600" }}>Git / GitHub</span><span style={{ color: "#7a9e7a" }}> — fluido</span></p>
-          <p><span style={{ color: "#ff6600" }}>Linux / CLI</span><span style={{ color: "#7a9e7a" }}> — familiar</span></p>
-        </div>
-      </div>
-    ),
-    "experiencia": (
-      <div>
-        <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.5 }}>
-          $ cat experiencia.txt
-        </p>
-        <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
-          <p style={{ color: "#ffaa00", marginBottom: 8 }}>Freelance Developer — 2025</p>
-          <p style={{ color: "#7a9e7a", fontSize: 12, marginBottom: 16 }}>
-            E-commerce completo para cliente local.<br/>
-            Python, Flask, SQLite, Railway.
-          </p>
-          <p style={{ color: "#ffaa00", marginBottom: 8 }}>Self-taught — 2024</p>
-          <p style={{ color: "#7a9e7a", fontSize: 12 }}>
-            Aprendizaje intensivo construyendo<br/>
-            proyectos reales desde cero.
-          </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div>
+            <p style={{ color: "#4444ff", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>frontend</p>
+            <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2, color: "#7a9e7a" }}>
+              <p>HTML / CSS</p>
+              <p>JavaScript</p>
+              <p style={{ color: "#e8c46a" }}>React</p>
+              <p style={{ color: "#e8c46a" }}>Next.js</p>
+              <p style={{ color: "#e8c46a" }}>Tailwind</p>
+            </div>
+          </div>
+          <div>
+            <p style={{ color: "#00aa44", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>backend</p>
+            <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2, color: "#7a9e7a" }}>
+              <p>Python</p>
+              <p>Flask</p>
+              <p>REST APIs</p>
+              <p>SQLite</p>
+              <p>Supabase</p>
+            </div>
+          </div>
+          <div>
+            <p style={{ color: "#ff6600", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>deploy</p>
+            <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2, color: "#7a9e7a" }}>
+              <p>Railway</p>
+              <p>Vercel</p>
+              <p>Git / GitHub</p>
+              <p>Linux / CLI</p>
+            </div>
+          </div>
+          <div>
+            <p style={{ color: "#ff44ff", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>aprendiendo</p>
+            <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2, color: "#e8c46a" }}>
+              <p>TypeScript</p>
+              <p>React</p>
+              <p>Next.js</p>
+              <p>Tailwind</p>
+            </div>
+          </div>
         </div>
       </div>
     ),
