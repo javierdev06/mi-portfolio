@@ -45,16 +45,13 @@ export default function Home() {
       height: "100vh",
       overflow: "hidden",
       background: "#0a0a0a",
+      alignItems: "center",
     }}>
-      {/* Canvas principal */}
       <div style={{
         position: "relative",
         width: 800,
-        height: "100vh",
+        height: 600,
         flexShrink: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
       }}>
         {!started
           ? <Intro lang={lang} onStart={handleStart} />
@@ -79,44 +76,48 @@ export default function Home() {
           />
         )}
 
-        {/* Controles superiores */}
+        {/* Idioma — izquierda */}
         <div style={{
           position: "absolute",
-          top: 8,
-          right: 8,
-          display: "flex",
-          flexDirection: "row",
-          gap: 6,
+          top: 55,
+          left: 8,
           zIndex: 40,
-          alignItems: "center",
         }}>
           <button
             onClick={() => setLang(l => l === "es" ? "en" : "es")}
             style={{
               background: "rgba(0,0,0,0.8)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.1)",
               color: "#c8c8c8",
               fontFamily: "monospace",
               fontSize: 10,
               padding: "4px 10px",
               borderRadius: 4,
               cursor: "pointer",
-              height: 28,
+              height: 26,
             }}
           >
             {lang === "es" ? "ESP | ENG" : "ENG | ESP"}
           </button>
+        </div>
 
-          {started && (
+        {/* Volumen — derecha, un poco más abajo */}
+        {started && (
+          <div style={{
+            position: "absolute",
+            top: 55,
+            right: 8,
+            zIndex: 40,
+          }}>
             <button
               onClick={handleMute}
               title={muted ? "Activar música" : "Silenciar música"}
               style={{
                 background: "rgba(0,0,0,0.8)",
-                border: `1px solid ${muted ? "rgba(255,0,170,0.3)" : "rgba(255,255,255,0.08)"}`,
+                border: `1px solid ${muted ? "rgba(255,0,170,0.3)" : "rgba(255,255,255,0.1)"}`,
                 color: muted ? "#ff00aa" : "#c8c8c8",
-                width: 28,
-                height: 28,
+                width: 26,
+                height: 26,
                 borderRadius: 4,
                 cursor: "pointer",
                 display: "flex",
@@ -127,11 +128,11 @@ export default function Home() {
             >
               {muted ? <IconVolumeOff size={14} /> : <IconVolume size={14} />}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Panel Matrix lateral */}
+      {/* Matrix lateral */}
       {started && (
         <div style={{
           flex: 1,

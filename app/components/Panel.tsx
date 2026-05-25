@@ -20,7 +20,7 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         </p>
         <div style={{ border: "1px solid rgba(0,255,136,0.2)", padding: 16, borderRadius: 6, marginBottom: 12, background: "rgba(0,255,136,0.03)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 14, fontWeight: "bold" }}>
+            <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13, fontWeight: "bold" }}>
               Provisiones El Retiro
             </p>
             <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,136,0.3)", padding: "2px 8px", borderRadius: 3 }}>
@@ -40,7 +40,7 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
           </div>
         </div>
         <div style={{ border: "1px solid rgba(255,255,255,0.06)", padding: 16, borderRadius: 6, opacity: 0.4 }}>
-          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 13 }}>
+          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12 }}>
             {lang === "es" ? "Próximo Proyecto" : "Next Project"}
           </p>
           <p style={{ color: "#666", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>
@@ -55,12 +55,12 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
           $ cat javier.json
         </p>
         <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
-          <p><span style={{ color: "#666" }}>"nombre"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#00e5ff" }}>"Javier Cortes"</span></p>
-          <p><span style={{ color: "#666" }}>"rol"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#00e5ff" }}>"Full Stack Developer"</span></p>
-          <p><span style={{ color: "#666" }}>"ubicación"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#00e5ff" }}>"Chile"</span></p>
-          <p><span style={{ color: "#666" }}>"experiencia"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#00ff88" }}>"1.5 años"</span></p>
-          <p><span style={{ color: "#666" }}>"stack"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#ff00aa" }}>["Python", "Flask", "JS", "React"]</span></p>
-          <p><span style={{ color: "#666" }}>"disponible"</span><span style={{ color: "#c8c8c8" }}>: </span><span style={{ color: "#00ff88" }}>true</span></p>
+          <p><span style={{ color: "#555" }}>"nombre"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#00e5ff" }}>"Javier Cortes"</span></p>
+          <p><span style={{ color: "#555" }}>"rol"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#00e5ff" }}>"Full Stack Developer"</span></p>
+          <p><span style={{ color: "#555" }}>"ubicación"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#00e5ff" }}>"Chile"</span></p>
+          <p><span style={{ color: "#555" }}>"experiencia"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#00ff88" }}>"1.5 años"</span></p>
+          <p><span style={{ color: "#555" }}>"stack"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#ff00aa" }}>["Python", "Flask", "JS", "React"]</span></p>
+          <p><span style={{ color: "#555" }}>"disponible"</span><span style={{ color: "#888" }}>: </span><span style={{ color: "#00ff88" }}>true</span></p>
         </div>
       </div>
     ),
@@ -71,16 +71,16 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <a href="mailto:javier.dev06@gmail.com" style={{ display: "flex", alignItems: "center", gap: 12, padding: 14, border: "1px solid rgba(0,255,136,0.2)", borderRadius: 6, textDecoration: "none", background: "rgba(0,255,136,0.04)" }}>
-            <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 18 }}>@</span>
+            <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 20 }}>@</span>
             <div>
-              <p style={{ color: "#666", fontFamily: "monospace", fontSize: 10, marginBottom: 3 }}>email</p>
+              <p style={{ color: "#555", fontFamily: "monospace", fontSize: 10, marginBottom: 3 }}>email</p>
               <p style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 13 }}>javier.dev06@gmail.com</p>
             </div>
           </a>
           <a href="https://github.com/javierdev06" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 12, padding: 14, border: "1px solid rgba(0,229,255,0.15)", borderRadius: 6, textDecoration: "none", background: "rgba(0,229,255,0.03)" }}>
-            <span style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 18 }}>#</span>
+            <span style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 20 }}>#</span>
             <div>
-              <p style={{ color: "#666", fontFamily: "monospace", fontSize: 10, marginBottom: 3 }}>github</p>
+              <p style={{ color: "#555", fontFamily: "monospace", fontSize: 10, marginBottom: 3 }}>github</p>
               <p style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 13 }}>github.com/javierdev06</p>
             </div>
           </a>
@@ -93,12 +93,12 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
           $ ./contacto --open
         </p>
         <p style={{ color: "#ff00aa", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
-          {lang === "es" ? "acceso denegado" : "access denied"}
+          {lang === "es" ? "ACCESO DENEGADO" : "ACCESS DENIED"}
         </p>
-        <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
+        <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, lineHeight: 1.9 }}>
           {lang === "es"
-            ? "Primero explora la habitación:\n\n- Computador → proyectos\n- Estantería → sobre mí\n- Puerta → stack\n\nLuego el contacto se desbloqueará."
-            : "First explore the room:\n\n- Computer → projects\n- Shelf → about me\n- Door → stack\n\nThen contact will unlock."
+            ? "Primero explora la habitación:\n\n→ Computador → proyectos\n→ Estantería → sobre mí\n→ Puerta → stack\n\nLuego el contacto se desbloqueará."
+            : "First explore the room:\n\n→ Computer → projects\n→ Shelf → about me\n→ Door → stack\n\nThen contact will unlock."
           }
         </p>
       </div>
@@ -108,19 +108,19 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         <p style={{ color: "#666", fontFamily: "monospace", fontSize: 11, marginBottom: 16 }}>
           $ ./asistente --talk
         </p>
-        <p style={{ color: "#ff00aa", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
+        <p style={{ color: "#ff00aa", fontFamily: "monospace", fontSize: 13, marginBottom: 12 }}>
           {allVisited
-            ? (lang === "es" ? "Misión completada." : "Mission complete.")
+            ? (lang === "es" ? "MISIÓN COMPLETADA." : "MISSION COMPLETE.")
             : (lang === "es" ? "Hola, soy el asistente de Javier." : "Hi, I'm Javier's assistant.")}
         </p>
-        <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
+        <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, lineHeight: 1.9 }}>
           {allVisited
             ? (lang === "es"
-                ? "Ya exploraste todo. Ahora puedes contactar a Javier."
-                : "You've explored everything. You can now contact Javier.")
+                ? "Ya exploraste todo.\nAhora puedes contactar a Javier."
+                : "You've explored everything.\nYou can now contact Javier.")
             : (lang === "es"
-                ? "Explora la habitación:\n\n- Computador → proyectos\n- Estantería → sobre mí\n- Puerta → stack\n\nVisítalos para desbloquear el contacto."
-                : "Explore the room:\n\n- Computer → projects\n- Shelf → about me\n- Door → stack\n\nVisit them all to unlock contact.")
+                ? "Explora la habitación:\n\n→ Computador → proyectos\n→ Estantería → sobre mí\n→ Puerta → stack\n\nVísitalos para desbloquear el contacto."
+                : "Explore the room:\n\n→ Computer → projects\n→ Shelf → about me\n→ Door → stack\n\nVisit them all to unlock contact.")
           }
         </p>
       </div>
@@ -130,19 +130,19 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         <p style={{ color: "#666", fontFamily: "monospace", fontSize: 11, marginBottom: 16 }}>
           $ cat stack.txt
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           {[
-            { label: "frontend", color: "#00e5ff", items: ["HTML / CSS", "JavaScript", "React *", "Next.js *", "Tailwind *"] },
+            { label: "frontend", color: "#00e5ff", items: ["HTML / CSS", "JavaScript", "React*", "Next.js*", "Tailwind*"] },
             { label: "backend", color: "#00ff88", items: ["Python", "Flask", "REST APIs", "SQLite", "Supabase"] },
             { label: "deploy", color: "#ff00aa", items: ["Railway", "Vercel", "Git / GitHub", "Linux / CLI"] },
             { label: lang === "es" ? "aprendiendo" : "learning", color: "#ffaa00", items: ["TypeScript", "React", "Next.js", "Tailwind"] },
           ].map(({ label, color, items }) => (
             <div key={label}>
-              <p style={{ color, fontFamily: "monospace", fontSize: 11, marginBottom: 8 }}>{label}</p>
-              <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2 }}>
+              <p style={{ color, fontFamily: "monospace", fontSize: 11, marginBottom: 10, letterSpacing: 1 }}>{label}</p>
+              <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 1.9 }}>
                 {items.map(item => (
                   <p key={item} style={{ color: item.includes("*") ? "#ffaa00" : "#c8c8c8" }}>
-                    {item.replace(" *", "")}
+                    {item.replace("*", "")}
                   </p>
                 ))}
               </div>
@@ -167,13 +167,16 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         background: "#111",
         border: `1px solid ${isLocked ? "rgba(255,0,170,0.4)" : "rgba(0,255,136,0.25)"}`,
         borderRadius: 8,
-        width: 440,
+        width: 420,
+        maxHeight: "75vh",
+        display: "flex",
+        flexDirection: "column",
         position: "relative",
-        overflow: "hidden",
         boxShadow: isLocked
           ? "0 0 30px rgba(255,0,170,0.1)"
           : "0 0 30px rgba(0,255,136,0.08)",
       }}>
+        {/* Header */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -181,6 +184,8 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
           padding: "10px 16px",
           background: "#0d0d0d",
           borderBottom: `1px solid ${isLocked ? "rgba(255,0,170,0.15)" : "rgba(255,255,255,0.06)"}`,
+          borderRadius: "8px 8px 0 0",
+          flexShrink: 0,
         }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
@@ -192,7 +197,9 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
             {lang === "es" ? "Presiona X para cerrar" : "Press X to close"}
           </span>
         </div>
-        <div style={{ padding: 24 }}>
+
+        {/* Contenido scrolleable */}
+        <div style={{ padding: 24, overflowY: "auto" }}>
           {content[section]}
         </div>
       </div>
