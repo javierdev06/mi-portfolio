@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState } from "react"
+import { IconVolume, IconVolumeOff } from "@tabler/icons-react"
 import Intro from "./components/game/Intro"
 import Game from "./components/game/Game"
 import Matrix from "./components/game/Matrix"
@@ -46,9 +47,8 @@ export default function Home() {
       background: "#000",
       overflowY: "auto",
     }}>
-    
       {/* Canvas principal */}
-      <div style={{ position: "relative", flexShrink: 0, width: 800, height: 600, marginTop: "auto", marginBottom: "auto" }}>
+      <div style={{ position: "relative", flexShrink: 0, width: 800 }}>
         {!started
           ? <Intro lang={lang} onStart={handleStart} />
           : <>
@@ -75,37 +75,14 @@ export default function Home() {
         {/* Controles superiores */}
         <div style={{
           position: "absolute",
-          top: 8,
-          right: 8,
+          top: 45,
+          right: 30,
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           gap: 6,
           zIndex: 40,
+          alignItems: "center",
         }}>
-          {/* Boton musica */}
-          {started && (
-            <button
-              onClick={handleMute}
-              title={muted ? "Activar música" : "Silenciar música"}
-              style={{
-                background: "rgba(0,0,0,0.7)",
-                border: `1px solid ${muted ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
-                color: muted ? "#ff4141" : "#00ff41",
-                fontFamily: "monospace",
-                fontSize: 16,
-                width: 36,
-                height: 36,
-                borderRadius: 4,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {muted ? "🔇" : "🔊"}
-            </button>
-          )}
-
           {/* Selector idioma */}
           <button
             onClick={() => setLang(l => l === "es" ? "en" : "es")}
@@ -115,14 +92,41 @@ export default function Home() {
               color: "#00ff41",
               fontFamily: "monospace",
               fontSize: 10,
-              padding: "4px 8px",
+              padding: "5px 10px",
               borderRadius: 4,
               cursor: "pointer",
               whiteSpace: "nowrap",
+              height: 28,
             }}
           >
             {lang === "es" ? "ESP | ENG" : "ENG | ESP"}
           </button>
+
+          {/* Boton musica */}
+          {started && (
+            <button
+              onClick={handleMute}
+              title={muted ? "Activar música" : "Silenciar música"}
+              style={{
+                background: "rgba(0,0,0,0.7)",
+                border: `1px solid ${muted ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
+                color: muted ? "#ff4141" : "#00ff41",
+                width: 28,
+                height: 28,
+                borderRadius: 4,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 0,
+              }}
+            >
+              {muted
+                ? <IconVolumeOff size={16} />
+                : <IconVolume size={16} />
+              }
+            </button>
+          )}
         </div>
       </div>
 
@@ -130,11 +134,10 @@ export default function Home() {
       {started && (
         <div style={{
           width: "calc(100vw - 800px)",
-          height: "100vh",
+          minHeight: "100vh",
           borderLeft: "1px solid rgba(0,255,65,0.1)",
           overflow: "hidden",
           flexShrink: 0,
-          alignSelf: "stretch",
         }}>
           <Matrix />
         </div>
