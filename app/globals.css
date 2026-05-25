@@ -28,3 +28,7 @@ body {
   background: var(--green);
   color: #000;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+}

@@ -3,10 +3,11 @@ import React from "react"
 type PanelProps = {
   section: string | null
   onClose: () => void
-  allVisited?: boolean
+  allVisited: boolean
+  lang: "es" | "en"
 }
 
-export default function Panel({ section, onClose, allVisited }: PanelProps) {
+export default function Panel({ section, onClose, allVisited, lang }: PanelProps) {
   if (!section) return null
 
   const content: Record<string, React.ReactNode> = {
@@ -21,23 +22,30 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
               Provisiones El Retiro
             </p>
             <span style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,65,0.3)", padding: "2px 8px", borderRadius: 3 }}>
-              produccion
+              {lang === "es" ? "producción" : "production"}
             </span>
           </div>
           <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 12, marginBottom: 8, lineHeight: 1.6 }}>
-            E-commerce full stack para minimarket local. Panel admin, inventario, WhatsApp.
+            {lang === "es"
+              ? "E-commerce full stack para minimarket local. Panel admin, inventario, WhatsApp."
+              : "Full stack e-commerce for local grocery store. Admin panel, inventory, WhatsApp."
+            }
           </p>
           <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 11, opacity: 0.6 }}>
             Python · Flask · SQLite · Railway
           </p>
         </div>
         <div style={{ border: "1px solid rgba(255,255,255,0.05)", padding: 16, borderRadius: 4, opacity: 0.4 }}>
-          <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13 }}>Proximo proyecto</p>
-          <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>En construccion...</p>
+          <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13 }}>
+            {lang === "es" ? "Próximo Proyecto" : "Next Project"}
+          </p>
+          <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>
+            {lang === "es" ? "En construcción..." : "In progress..."}
+          </p>
         </div>
       </div>
     ),
-    "sobre mi": (
+    "sobre mí": (
       <div>
         <p style={{ color: "#00ff41", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.5 }}>
           $ cat javier.json
@@ -45,8 +53,8 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
         <div style={{ fontFamily: "monospace", fontSize: 13, lineHeight: 2 }}>
           <p><span style={{ color: "#7a9e7a" }}>"nombre"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Javier Cortes"</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"rol"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Full Stack Developer"</span></p>
-          <p><span style={{ color: "#7a9e7a" }}>"ubicacion"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Chile"</span></p>
-          <p><span style={{ color: "#7a9e7a" }}>"experiencia"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>"1.5 anos"</span></p>
+          <p><span style={{ color: "#7a9e7a" }}>"ubicación"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#ce9178" }}>"Chile"</span></p>
+          <p><span style={{ color: "#7a9e7a" }}>"experiencia"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>"1.5 años"</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"stack"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#e8c46a" }}>["Python", "Flask", "JS", "React"]</span></p>
           <p><span style={{ color: "#7a9e7a" }}>"disponible"</span><span style={{ color: "#fff" }}>: </span><span style={{ color: "#00ff41" }}>true</span></p>
         </div>
@@ -75,20 +83,19 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
         </div>
       </div>
     ),
-    "locked": (
+    "bloqueado": (
       <div>
         <p style={{ color: "#ff4444", fontFamily: "monospace", fontSize: 11, marginBottom: 16, opacity: 0.7 }}>
           $ ./contacto --open
         </p>
         <p style={{ color: "#ff4444", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
-          acceso denegado
+          {lang === "es" ? "acceso denegado" : "access denied"}
         </p>
         <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
-          Primero explora la habitacion completa:<br/><br/>
-          - Ve al computador<br/>
-          - Lee la estanteria<br/>
-          - Revisa la puerta del stack<br/><br/>
-          Luego el contacto se desbloqueara.
+          {lang === "es"
+            ? "Primero explora la habitación:\n\n- Ve al computador\n- Lee la estantería\n- Revisa la puerta del stack\n\nLuego el contacto se desbloqueará."
+            : "First explore the room:\n\n- Check the computer\n- Read the shelf\n- Open the stack door\n\nThen contact will unlock."
+          }
         </p>
       </div>
     ),
@@ -98,12 +105,18 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
           $ ./asistente --talk
         </p>
         <p style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 14, marginBottom: 12 }}>
-          {allVisited ? "Misión completada." : "Hola, soy el asistente de Javier."}
+          {allVisited
+            ? (lang === "es" ? "Misión completada." : "Mission complete.")
+            : (lang === "es" ? "Hola, soy el asistente de Javier." : "Hi, I'm Javier's assistant.")}
         </p>
         <p style={{ color: "#7a9e7a", fontFamily: "monospace", fontSize: 13, lineHeight: 1.8 }}>
           {allVisited
-            ? "Ya exploraste todo. Ahora puedes contactar a Javier directamente."
-            : "Explora la habitacion antes de contactar a Javier:\n\n- Computador: proyectos\n- Estanteria: sobre el\n- Puerta derecha: stack\n\nCuando los visites todos, el contacto se desbloqueara."
+            ? (lang === "es"
+                ? "Ya exploraste todo. Ahora puedes contactar a Javier."
+                : "You've explored everything. You can now contact Javier.")
+            : (lang === "es"
+                ? "Explora la habitación antes de contactar a Javier:\n\n- Computador: proyectos\n- Estantería: sobre mí\n- Puerta derecha: stack\n\nCuando los visites, el contacto se desbloqueará."
+                : "Explore the room before contacting Javier:\n\n- Computer: projects\n- Shelf: about me\n- Right door: stack\n\nVisit them all to unlock contact.")
           }
         </p>
       </div>
@@ -144,7 +157,9 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
             </div>
           </div>
           <div>
-            <p style={{ color: "#ff44ff", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>aprendiendo</p>
+            <p style={{ color: "#ff44ff", fontFamily: "monospace", fontSize: 11, marginBottom: 8, opacity: 0.8 }}>
+              {lang === "es" ? "aprendiendo" : "learning"}
+            </p>
             <div style={{ fontFamily: "monospace", fontSize: 12, lineHeight: 2, color: "#e8c46a" }}>
               <p>TypeScript</p>
               <p>React</p>
@@ -164,15 +179,15 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      background: "rgba(0,0,0,0.85)"
+      background: "rgba(0,0,0,0.92)",
     }}>
       <div style={{
         background: "#0a0a0a",
-        border: `1px solid ${section === "locked" ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
+        border: `1px solid ${section === "bloqueado" ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
         borderRadius: 6,
         width: 420,
         position: "relative",
-        overflow: "hidden"
+        overflow: "hidden",
       }}>
         <div style={{
           display: "flex",
@@ -180,7 +195,7 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
           gap: 8,
           padding: "10px 16px",
           background: "#0d0d0d",
-          borderBottom: `1px solid ${section === "locked" ? "rgba(255,65,65,0.2)" : "rgba(0,255,65,0.1)"}`
+          borderBottom: `1px solid ${section === "bloqueado" ? "rgba(255,65,65,0.2)" : "rgba(0,255,65,0.1)"}`,
         }}>
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
           <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
@@ -189,7 +204,7 @@ export default function Panel({ section, onClose, allVisited }: PanelProps) {
             ~/{section}
           </span>
           <span style={{ marginLeft: "auto", color: "#7a9e7a", fontFamily: "monospace", fontSize: 10 }}>
-            presiona X para cerrar
+            {lang === "es" ? "Presiona X para cerrar" : "Press X to close"}
           </span>
         </div>
         <div style={{ padding: 24 }}>
