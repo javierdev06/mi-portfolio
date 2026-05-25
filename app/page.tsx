@@ -80,7 +80,7 @@ export default function Home() {
         <div style={{
           position: "absolute",
           top: 55,
-          left: 8,
+          left: 30,
           zIndex: 40,
         }}>
           <button
@@ -106,7 +106,7 @@ export default function Home() {
           <div style={{
             position: "absolute",
             top: 55,
-            right: 8,
+            right: 25,
             zIndex: 40,
           }}>
             <button
