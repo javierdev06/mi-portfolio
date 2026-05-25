@@ -21,12 +21,11 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
     const ctx = canvas.getContext("2d")!
     canvas.focus()
 
-    const player = { x: 400, y: 300, speed: 3, dir: "down", moving: false, frame: 0 }
-    const npc = { x: 300, y: 400, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
+    const player = { x: 400, y: 350, speed: 3, dir: "down", moving: false, frame: 0 }
+    const npc = { x: 200, y: 450, dir: "down", frame: 0, moveTimer: 0, dx: 1, dy: 0 }
     const keys: Record<string, boolean> = {}
     let frameTimer = 0
     let stepTimer = 0
-
     const objects = INITIAL_OBJECTS.map(o => ({ ...o }))
 
     const isOpen = () => document.querySelector("[data-panel]") !== null
@@ -41,9 +40,7 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
         })
         if (near) {
           if (near.label === "contacto") {
-            const allDone = ["proyectos", "sobre mí", "stack"].every(r =>
-              visitedRef.current.includes(r)
-            )
+            const allDone = ["proyectos", "sobre mí", "stack"].every(r => visitedRef.current.includes(r))
             if (!allDone) { onOpen("bloqueado"); return }
             else { playUnlock(); onVisit("contacto") }
           }
@@ -52,174 +49,278 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
           onOpen(near.label)
         }
       }
-      if ((e.key === "x" || e.key === "X") && isOpen()) {
-        playClose()
-        onClose()
-      }
+      if ((e.key === "x" || e.key === "X") && isOpen()) { playClose(); onClose() }
     }
 
     const handleKeyUp = (e: KeyboardEvent) => { keys[e.key] = false }
-
     window.addEventListener("keydown", handleKey)
     window.addEventListener("keyup", handleKeyUp)
 
     const draw = () => {
-      // Piso
-      ctx.fillStyle = "#1a1208"
+      const time = Date.now()
+      ctx.clearRect(0, 0, 800, 600)
+
+      // Fondo
+      ctx.fillStyle = "#0a0a0a"
       ctx.fillRect(0, 0, 800, 600)
 
+      // Grid
       for (let x = 0; x < 800; x += 32) {
-        for (let y = 0; y < 600; y += 32) {
-          ctx.strokeStyle = "rgba(255,200,100,0.06)"
+        for (let y = 80; y < 600; y += 32) {
+          ctx.strokeStyle = "rgba(255,255,255,0.02)"
           ctx.lineWidth = 1
           ctx.strokeRect(x, y, 32, 32)
         }
       }
 
       // Luz jugador
-      const lightGradient = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 120)
-      lightGradient.addColorStop(0, "rgba(0,255,65,0.07)")
-      lightGradient.addColorStop(1, "rgba(0,0,0,0)")
-      ctx.fillStyle = lightGradient
+      const lg = ctx.createRadialGradient(player.x, player.y, 0, player.x, player.y, 160)
+      lg.addColorStop(0, "rgba(0,229,255,0.08)")
+      lg.addColorStop(1, "rgba(0,0,0,0)")
+      ctx.fillStyle = lg
       ctx.fillRect(0, 0, 800, 600)
 
       // Luz objetos
       objects.slice(0, 3).forEach(obj => {
-        const objLight = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 80)
-        objLight.addColorStop(0, "rgba(0,255,65,0.04)")
-        objLight.addColorStop(1, "rgba(0,0,0,0)")
-        ctx.fillStyle = objLight
+        const ol = ctx.createRadialGradient(obj.x, obj.y, 0, obj.x, obj.y, 90)
+        ol.addColorStop(0, "rgba(0,255,136,0.06)")
+        ol.addColorStop(1, "rgba(0,0,0,0)")
+        ctx.fillStyle = ol
         ctx.fillRect(0, 0, 800, 600)
       })
 
-      // Oscuridad
-      const dark = ctx.createRadialGradient(400, 300, 200, 400, 300, 500)
-      dark.addColorStop(0, "rgba(0,0,0,0)")
-      dark.addColorStop(1, "rgba(0,0,0,0.5)")
-      ctx.fillStyle = dark
+      // Viñeta
+      const vg = ctx.createRadialGradient(400, 300, 100, 400, 300, 500)
+      vg.addColorStop(0, "rgba(0,0,0,0)")
+      vg.addColorStop(1, "rgba(0,0,0,0.65)")
+      ctx.fillStyle = vg
       ctx.fillRect(0, 0, 800, 600)
 
-      // Pared superior
-      ctx.fillStyle = "#0d0d0d"
-      ctx.fillRect(0, 0, 800, 80)
-      ctx.fillStyle = "#00ff41"
-      ctx.font = "bold 18px monospace"
+      // ===== PARED SUPERIOR =====
+      ctx.fillStyle = "#060606"
+      ctx.fillRect(0, 0, 800, 82)
+
+      // Titulo — centrado, grande, claro
+      ctx.fillStyle = "#ffffff"
+      ctx.font = "bold 24px monospace"
       ctx.textAlign = "center"
-      ctx.fillText("JAVIER CORTES", 400, 35)
-      ctx.fillStyle = "rgba(0,255,65,0.7)"
-      ctx.font = "11px monospace"
-      ctx.fillText("full stack developer · portfolio", 400, 55)
-      ctx.fillStyle = "rgba(0,255,65,0.2)"
-      ctx.fillRect(60, 30, 200, 1)
-      ctx.fillRect(540, 30, 200, 1)
-      ctx.fillStyle = "#00ff41"
-      ctx.fillRect(0, 80, 800, 2)
+      ctx.shadowColor = "rgba(0,255,136,0.3)"
+      ctx.shadowBlur = 10
+      ctx.fillText("JAVIER CORTES", 400, 34)
+      ctx.shadowBlur = 0
+
+      // Subtítulo
+      ctx.fillStyle = "#888"
+      ctx.font = "13px monospace"
+      ctx.fillText("Full Stack Developer  ·  Portfolio", 400, 58)
+
+      // Línea inferior pared — verde brillante
+      ctx.fillStyle = "#00ff88"
+      ctx.fillRect(0, 82, 800, 2)
+      ctx.fillStyle = "rgba(0,255,136,0.15)"
+      ctx.fillRect(0, 84, 800, 4)
+
+      // Detalles decorativos pared
+      const pulse = 0.4 + Math.sin(time / 700) * 0.2
+      ctx.fillStyle = `rgba(255,0,170,${pulse})`
+      ctx.fillRect(30, 34, 100, 1)
+      ctx.fillRect(670, 34, 100, 1)
 
       // Esquinas
-      ctx.fillStyle = "#333"
+      ctx.fillStyle = "#111"
       ctx.fillRect(0, 0, 20, 600)
       ctx.fillRect(780, 0, 20, 600)
 
-      // Puerta
-      const doorLight = ctx.createRadialGradient(780, 315, 0, 780, 315, 60)
-      doorLight.addColorStop(0, "rgba(255,180,50,0.15)")
-      doorLight.addColorStop(1, "rgba(0,0,0,0)")
-      ctx.fillStyle = doorLight
-      ctx.fillRect(0, 0, 800, 600)
-      ctx.fillStyle = "#3a2a0a"
-      ctx.fillRect(770, 255, 20, 120)
-      ctx.fillStyle = "#5c3d1e"
-      ctx.fillRect(772, 257, 16, 116)
-      ctx.fillStyle = "#ffaa00"
-      ctx.beginPath()
-      ctx.arc(774, 315, 3, 0, Math.PI * 2)
-      ctx.fill()
+      // Neon tubes
+      const neonA = 0.15 + Math.sin(time / 900) * 0.06
+      ctx.fillStyle = `rgba(0,229,255,${neonA})`
+      ctx.fillRect(20, 88, 2, 200)
+      ctx.fillStyle = `rgba(255,0,170,${neonA})`
+      ctx.fillRect(778, 88, 2, 200)
 
-      // PC
-      const drawPC = (x: number, y: number) => {
-        const done = visitedRef.current.includes("proyectos")
-        ctx.fillStyle = "rgba(0,0,0,0.4)"
-        ctx.fillRect(x - 18, y + 6, 40, 6)
-        ctx.fillStyle = "#222"
-        ctx.fillRect(x - 20, y - 24, 40, 28)
-        ctx.fillStyle = done ? "#0a3a0a" : "#0a2a0a"
-        ctx.fillRect(x - 16, y - 20, 32, 20)
-        ctx.fillStyle = done ? "#00ff41" : "#005511"
-        ctx.font = "6px monospace"
-        ctx.textAlign = "center"
-        ctx.fillText(done ? "OK" : ">_", x, y - 8)
-        ctx.fillStyle = "#333"
-        ctx.fillRect(x - 4, y + 4, 8, 4)
-        ctx.fillRect(x - 10, y + 8, 20, 3)
-        ctx.fillStyle = done ? "#00ff41" : "#ffffff"
-        ctx.font = "10px monospace"
-        ctx.fillText(lang === "es" ? "proyectos" : "projects", x, y + 24)
+      // Servidor izquierda
+      ctx.fillStyle = "#141414"
+      ctx.fillRect(28, 370, 52, 80)
+      ctx.strokeStyle = "rgba(0,255,136,0.2)"
+      ctx.lineWidth = 1
+      ctx.strokeRect(28, 370, 52, 80)
+      for (let i = 0; i < 3; i++) {
+        ctx.fillStyle = i === 0 ? "#00ff88" : "#2a2a2a"
+        ctx.fillRect(36, 382 + i * 16, 12, 5)
+        ctx.fillStyle = i === 1 ? "#ff4444" : "#1a1a1a"
+        ctx.fillRect(58, 382 + i * 16, 5, 5)
+      }
+      ctx.fillStyle = "#555"
+      ctx.font = "8px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("SRV-01", 54, 440)
+
+      // Terminal en pared derecha
+      ctx.fillStyle = "#0c0c0c"
+      ctx.fillRect(580, 90, 140, 80)
+      ctx.strokeStyle = "rgba(0,229,255,0.25)"
+      ctx.lineWidth = 1
+      ctx.strokeRect(580, 90, 140, 80)
+
+      // Header terminal
+      ctx.fillStyle = "#141414"
+      ctx.fillRect(580, 90, 140, 14)
+      ctx.fillStyle = "#ff5f57"
+      ctx.beginPath(); ctx.arc(590, 97, 3, 0, Math.PI * 2); ctx.fill()
+      ctx.fillStyle = "#febc2e"
+      ctx.beginPath(); ctx.arc(600, 97, 3, 0, Math.PI * 2); ctx.fill()
+      ctx.fillStyle = "#28c840"
+      ctx.beginPath(); ctx.arc(610, 97, 3, 0, Math.PI * 2); ctx.fill()
+
+      ctx.fillStyle = "#00ff88"
+      ctx.font = "8px monospace"
+      ctx.textAlign = "left"
+      ctx.fillText("> sistema ok", 584, 118)
+      ctx.fillStyle = "#c8c8c8"
+      ctx.fillText("> uptime: " + Math.floor(time / 1000 % 9999) + "s", 584, 130)
+      ctx.fillStyle = "#00e5ff"
+      ctx.fillText("> cpu: " + (20 + Math.sin(time / 1000) * 10).toFixed(0) + "%", 584, 142)
+      ctx.fillStyle = "#666"
+      ctx.fillText("> mem: 512mb", 584, 154)
+      if (Math.floor(time / 500) % 2 === 0) {
+        ctx.fillStyle = "#00ff88"
+        ctx.fillText("_", 584, 162)
       }
 
-      // Estanteria
+      // Caja PKG
+      ctx.fillStyle = "#141414"
+      ctx.fillRect(690, 500, 44, 34)
+      ctx.strokeStyle = "rgba(255,0,170,0.25)"
+      ctx.lineWidth = 1
+      ctx.strokeRect(690, 500, 44, 34)
+      ctx.fillStyle = "#ff00aa"
+      ctx.font = "8px monospace"
+      ctx.textAlign = "center"
+      ctx.fillText("PKG", 712, 521)
+
+      // Puerta derecha
+      const dl = ctx.createRadialGradient(779, 320, 0, 779, 320, 60)
+      dl.addColorStop(0, "rgba(255,170,0,0.15)")
+      dl.addColorStop(1, "rgba(0,0,0,0)")
+      ctx.fillStyle = dl
+      ctx.fillRect(0, 0, 800, 600)
+      ctx.fillStyle = "#181008"
+      ctx.fillRect(770, 260, 16, 120)
+      ctx.strokeStyle = "rgba(255,170,0,0.35)"
+      ctx.lineWidth = 1
+      ctx.strokeRect(770, 260, 16, 120)
+      ctx.fillStyle = "#ffaa00"
+      ctx.beginPath()
+      ctx.arc(773, 320, 3, 0, Math.PI * 2)
+      ctx.fill()
+      // Label puerta
+      const doorDist = Math.sqrt((player.x - 760) ** 2 + (player.y - 320) ** 2)
+      if (doorDist < 80) {
+        ctx.fillStyle = "rgba(255,170,0,0.8)"
+        ctx.font = "10px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText("STACK", 730, 252)
+      }
+
+      // ===== OBJETOS =====
+      const drawPC = (x: number, y: number) => {
+        const done = visitedRef.current.includes("proyectos")
+        // Sombra
+        ctx.fillStyle = "rgba(0,0,0,0.4)"
+        ctx.fillRect(x - 26, y + 10, 52, 6)
+        // Monitor
+        ctx.fillStyle = "#181818"
+        ctx.fillRect(x - 28, y - 32, 56, 40)
+        ctx.strokeStyle = done ? "rgba(0,255,136,0.5)" : "rgba(255,255,255,0.07)"
+        ctx.lineWidth = 1
+        ctx.strokeRect(x - 28, y - 32, 56, 40)
+        // Pantalla
+        ctx.fillStyle = done ? "rgba(0,255,136,0.1)" : "#0d0d0d"
+        ctx.fillRect(x - 22, y - 26, 44, 28)
+        ctx.fillStyle = done ? "#00ff88" : "#3a3a3a"
+        ctx.font = "9px monospace"
+        ctx.textAlign = "center"
+        ctx.fillText(done ? "[ OK ]" : ">_", x, y - 10)
+        // Base
+        ctx.fillStyle = "#181818"
+        ctx.fillRect(x - 6, y + 8, 12, 8)
+        ctx.fillRect(x - 16, y + 14, 32, 4)
+        // Label
+        ctx.fillStyle = done ? "#00ff88" : "#c8c8c8"
+        ctx.font = "13px monospace"
+        ctx.fillText(lang === "es" ? "proyectos" : "projects", x, y + 30)
+      }
+
       const drawShelf = (x: number, y: number) => {
         const done = visitedRef.current.includes("sobre mí")
         ctx.fillStyle = "rgba(0,0,0,0.4)"
-        ctx.fillRect(x - 20, y + 22, 44, 6)
-        ctx.fillStyle = done ? "#3d2a0a" : "#5c3d1e"
-        ctx.fillRect(x - 22, y - 28, 44, 4)
-        ctx.fillRect(x - 22, y - 4, 44, 4)
-        ctx.fillRect(x - 22, y + 20, 44, 4)
-        const books = ["#ff4444", "#4444ff", "#ffaa00", "#00ff41", "#ff44ff"]
-        books.forEach((color, i) => {
-          ctx.fillStyle = done ? "#00ff41" : color
-          ctx.fillRect(x - 18 + i * 9, y - 24, 7, 20)
+        ctx.fillRect(x - 30, y + 28, 60, 6)
+        ctx.fillStyle = "#241808"
+        ctx.fillRect(x - 30, y - 36, 60, 6)
+        ctx.fillRect(x - 30, y - 6, 60, 6)
+        ctx.fillRect(x - 30, y + 24, 60, 6)
+        const colors = done
+          ? Array(6).fill("#00ff88")
+          : ["#ff4444", "#4488ff", "#ffaa00", "#00e5ff", "#ff00aa", "#88ff00"]
+        colors.forEach((color, i) => {
+          ctx.fillStyle = color
+          ctx.fillRect(x - 26 + i * 10, y - 30, 8, 26)
         })
-        ctx.fillStyle = done ? "#00ff41" : "#ffffff"
-        ctx.font = "10px monospace"
+        ctx.fillStyle = done ? "#00ff88" : "#c8c8c8"
+        ctx.font = "13px monospace"
         ctx.textAlign = "center"
-        ctx.fillText(lang === "es" ? "sobre mí" : "about me", x, y + 36)
+        ctx.fillText(lang === "es" ? "sobre mí" : "about me", x, y + 46)
       }
 
-      // Telefono
       const drawPhone = (x: number, y: number) => {
         const done = visitedRef.current.includes("contacto")
         const unlocked = ["proyectos", "sobre mí", "stack"].every(r => visitedRef.current.includes(r))
         ctx.fillStyle = "rgba(0,0,0,0.4)"
-        ctx.fillRect(x - 10, y + 18, 24, 6)
-        ctx.fillStyle = unlocked ? "#222" : "#111"
-        ctx.fillRect(x - 12, y - 24, 24, 40)
-        ctx.fillStyle = done ? "#001a33" : (unlocked ? "#001a33" : "#0a0a0a")
-        ctx.fillRect(x - 9, y - 20, 18, 28)
-        ctx.fillStyle = "#444"
-        ctx.fillRect(x - 4, y + 12, 8, 4)
-        ctx.fillStyle = done ? "#00ff41" : (unlocked ? "#00ff41" : "#333")
-        ctx.font = "8px monospace"
-        ctx.textAlign = "center"
-        ctx.fillText(unlocked ? "@" : "X", x, y - 4)
-        ctx.fillStyle = done ? "#00ff41" : (unlocked ? "#ffffff" : "#444")
+        ctx.fillRect(x - 16, y + 26, 32, 6)
+        ctx.fillStyle = unlocked ? "#181818" : "#0d0d0d"
+        ctx.fillRect(x - 16, y - 32, 32, 56)
+        ctx.strokeStyle = done ? "rgba(0,255,136,0.5)" : (unlocked ? "rgba(0,229,255,0.25)" : "rgba(255,255,255,0.05)")
+        ctx.lineWidth = 1
+        ctx.strokeRect(x - 16, y - 32, 32, 56)
+        ctx.fillStyle = done ? "rgba(0,255,136,0.1)" : (unlocked ? "rgba(0,229,255,0.05)" : "#080808")
+        ctx.fillRect(x - 12, y - 26, 24, 38)
+        ctx.fillStyle = "#1a1a1a"
+        ctx.fillRect(x - 6, y + 16, 12, 6)
+        ctx.fillStyle = done ? "#00ff88" : (unlocked ? "#00e5ff" : "#444")
         ctx.font = "10px monospace"
-        ctx.fillText(lang === "es" ? "contacto" : "contact", x, y + 26)
+        ctx.textAlign = "center"
+        ctx.fillText(unlocked ? "@ " : "X", x, y - 4)
+        ctx.fillStyle = done ? "#00ff88" : (unlocked ? "#c8c8c8" : "#555")
+        ctx.font = "13px monospace"
+        ctx.fillText(lang === "es" ? "contacto" : "contact", x, y + 42)
         if (!unlocked) {
-          ctx.fillStyle = "#ff4444"
-          ctx.font = "12px monospace"
-          ctx.fillText("[]", x, y - 36)
+          ctx.fillStyle = "#ff00aa"
+          ctx.font = "14px monospace"
+          ctx.fillText("[]", x, y - 46)
         }
       }
 
-      drawPC(150, 150)
-      drawShelf(400, 150)
-      drawPhone(650, 150)
+      drawPC(150, 170)
+      drawShelf(400, 170)
+      drawPhone(650, 170)
 
       // NPC
-      drawCharacter(ctx, npc.x, npc.y, npc.dir, npc.frame, "#4444aa", "#f5c5a3", "#ffaa00")
+      drawCharacter(ctx, npc.x, npc.y, npc.dir, npc.frame, "#334466", "#f5c5a3", "#ff00aa")
       const npcDist = Math.sqrt((player.x - npc.x) ** 2 + (player.y - npc.y) ** 2)
       if (npcDist < 70) {
-        ctx.fillStyle = "rgba(0,0,0,0.8)"
-        ctx.fillRect(npc.x - 40, npc.y - 50, 80, 20)
-        ctx.fillStyle = "#ffaa00"
-        ctx.font = "9px monospace"
+        ctx.fillStyle = "rgba(0,0,0,0.88)"
+        ctx.fillRect(npc.x - 50, npc.y - 58, 100, 22)
+        ctx.strokeStyle = "rgba(255,0,170,0.4)"
+        ctx.lineWidth = 1
+        ctx.strokeRect(npc.x - 50, npc.y - 58, 100, 22)
+        ctx.fillStyle = "#ff00aa"
+        ctx.font = "11px monospace"
         ctx.textAlign = "center"
-        ctx.fillText("[ E ] hablar", npc.x, npc.y - 36)
+        ctx.fillText("[ E ] hablar", npc.x, npc.y - 43)
       }
 
       // Jugador
-      drawCharacter(ctx, player.x, player.y, player.dir, player.frame, "#2d4a2d", "#f5c5a3", "#00ff41")
+      drawCharacter(ctx, player.x, player.y, player.dir, player.frame, "#1a3a2a", "#f5c5a3", "#00e5ff")
 
       // Hint
       const near = objects.find(obj => {
@@ -228,19 +329,21 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
         return Math.sqrt(dx*dx + dy*dy) < 70
       })
       if (near && !isOpen()) {
-        ctx.fillStyle = "#00ff41"
+        ctx.fillStyle = "rgba(0,0,0,0.75)"
+        ctx.fillRect(180, 562, 440, 28)
+        ctx.fillStyle = "#00ff88"
         ctx.font = "14px monospace"
         ctx.textAlign = "center"
         ctx.fillText(
           lang === "es" ? `[E] ver ${near.label}` : `[E] view ${near.label}`,
-          400, 580
+          400, 581
         )
       }
     }
 
     const updateNPC = () => {
       npc.moveTimer++
-      if (npc.moveTimer > 60) {
+      if (npc.moveTimer > 80) {
         npc.moveTimer = 0
         const chosen = NPC_DIRS[Math.floor(Math.random() * NPC_DIRS.length)]
         npc.dx = chosen.dx
@@ -250,10 +353,11 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
       npc.x += npc.dx
       npc.y += npc.dy
       npc.frame++
+      // NPC solo en zona izquierda para no tapar objetos
       if (npc.x < 30) { npc.x = 30; npc.dx = 2; npc.dir = "right" }
-      if (npc.x > 750) { npc.x = 750; npc.dx = -2; npc.dir = "left" }
+      if (npc.x > 450) { npc.x = 450; npc.dx = -2; npc.dir = "left" }
       if (npc.y < 100) { npc.y = 100; npc.dy = 2; npc.dir = "down" }
-      if (npc.y > 560) { npc.y = 560; npc.dy = -2; npc.dir = "up" }
+      if (npc.y > 540) { npc.y = 540; npc.dy = -2; npc.dir = "up" }
       objects[3].x = npc.x
       objects[3].y = npc.y
     }
@@ -281,7 +385,7 @@ export default function Game({ visitedRef, onOpen, onClose, onVisit, lang }: Gam
       if (player.x < 30) player.x = 30
       if (player.x > 770) player.x = 770
       if (player.y < 95) player.y = 95
-      if (player.y > 580) player.y = 580
+      if (player.y > 555) player.y = 555
     }
 
     let animId: number

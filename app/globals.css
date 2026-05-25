@@ -3,32 +3,40 @@
 @tailwind utilities;
 
 :root {
-  --bg: #060606;
-  --green: #00ff41;
-  --green-dim: #00c832;
-  --green-muted: rgba(0, 255, 65, 0.08);
-  --text: #e8ffe8;
-  --text-muted: #7a9e7a;
-  --border: rgba(0, 255, 65, 0.1);
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --text: #c8c8c8;
+  --text-dim: #666666;
+  --green: #00ff88;
+  --cyan: #00e5ff;
+  --magenta: #ff00aa;
+  --border: rgba(255,255,255,0.08);
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Courier New', monospace;
+  font-family: monospace;
+  -webkit-font-smoothing: antialiased;
 }
 
 ::selection {
-  background: var(--green);
+  background: var(--cyan);
   color: #000;
 }
-html, body {
-  margin: 0;
-  padding: 0;
-}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--green); border-radius: 2px; }

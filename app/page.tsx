@@ -41,14 +41,21 @@ export default function Home() {
   return (
     <main style={{
       display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "center",
-      minHeight: "100vh",
-      background: "#000",
-      overflowY: "auto",
+      width: "100vw",
+      height: "100vh",
+      overflow: "hidden",
+      background: "#0a0a0a",
     }}>
       {/* Canvas principal */}
-      <div style={{ position: "relative", flexShrink: 0, width: 800 }}>
+      <div style={{
+        position: "relative",
+        width: 800,
+        height: "100vh",
+        flexShrink: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}>
         {!started
           ? <Intro lang={lang} onStart={handleStart} />
           : <>
@@ -75,42 +82,39 @@ export default function Home() {
         {/* Controles superiores */}
         <div style={{
           position: "absolute",
-          top: 45,
-          right: 30,
+          top: 8,
+          right: 8,
           display: "flex",
           flexDirection: "row",
           gap: 6,
           zIndex: 40,
           alignItems: "center",
         }}>
-          {/* Selector idioma */}
           <button
             onClick={() => setLang(l => l === "es" ? "en" : "es")}
             style={{
-              background: "rgba(0,0,0,0.7)",
-              border: "1px solid rgba(0,255,65,0.3)",
-              color: "#00ff41",
+              background: "rgba(0,0,0,0.8)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "#c8c8c8",
               fontFamily: "monospace",
               fontSize: 10,
-              padding: "5px 10px",
+              padding: "4px 10px",
               borderRadius: 4,
               cursor: "pointer",
-              whiteSpace: "nowrap",
               height: 28,
             }}
           >
             {lang === "es" ? "ESP | ENG" : "ENG | ESP"}
           </button>
 
-          {/* Boton musica */}
           {started && (
             <button
               onClick={handleMute}
               title={muted ? "Activar música" : "Silenciar música"}
               style={{
-                background: "rgba(0,0,0,0.7)",
-                border: `1px solid ${muted ? "rgba(255,65,65,0.4)" : "rgba(0,255,65,0.3)"}`,
-                color: muted ? "#ff4141" : "#00ff41",
+                background: "rgba(0,0,0,0.8)",
+                border: `1px solid ${muted ? "rgba(255,0,170,0.3)" : "rgba(255,255,255,0.08)"}`,
+                color: muted ? "#ff00aa" : "#c8c8c8",
                 width: 28,
                 height: 28,
                 borderRadius: 4,
@@ -121,10 +125,7 @@ export default function Home() {
                 padding: 0,
               }}
             >
-              {muted
-                ? <IconVolumeOff size={16} />
-                : <IconVolume size={16} />
-              }
+              {muted ? <IconVolumeOff size={14} /> : <IconVolume size={14} />}
             </button>
           )}
         </div>
@@ -133,11 +134,10 @@ export default function Home() {
       {/* Panel Matrix lateral */}
       {started && (
         <div style={{
-          width: "calc(100vw - 800px)",
-          minHeight: "100vh",
-          borderLeft: "1px solid rgba(0,255,65,0.1)",
+          flex: 1,
+          height: "100vh",
+          borderLeft: "1px solid rgba(255,255,255,0.05)",
           overflow: "hidden",
-          flexShrink: 0,
         }}>
           <Matrix />
         </div>

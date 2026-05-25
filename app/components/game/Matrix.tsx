@@ -13,10 +13,10 @@ export default function Matrix() {
     const fontSize = 12
     const cols = Math.floor(W / fontSize)
     const drops = Array(cols).fill(1)
-    const chars = "01アイウエオカキクケコ{}[]<>/\\|=+-*&%$#@!?"
+    const chars = "01{}[]<>/\\|=+-*&%$#@!?"
 
     const draw = () => {
-      ctx.fillStyle = "rgba(0,0,0,0.05)"
+      ctx.fillStyle = "rgba(10,10,10,0.06)"
       ctx.fillRect(0, 0, W, H)
       ctx.font = `${fontSize}px monospace`
 
@@ -24,15 +24,11 @@ export default function Matrix() {
         const char = chars[Math.floor(Math.random() * chars.length)]
         const x = i * fontSize
         const y = drops[i] * fontSize
-
-        if (Math.random() > 0.95) {
-          ctx.fillStyle = "#ffffff"
-        } else {
-          ctx.fillStyle = `rgba(0,255,65,${Math.random() * 0.4 + 0.1})`
-        }
-
+        const r = Math.random()
+        if (r > 0.98) ctx.fillStyle = "#ff00aa"
+        else if (r > 0.95) ctx.fillStyle = "#00e5ff"
+        else ctx.fillStyle = `rgba(0,255,136,${Math.random() * 0.25 + 0.05})`
         ctx.fillText(char, x, y)
-
         if (y > H && Math.random() > 0.975) drops[i] = 0
         drops[i]++
       }
@@ -47,42 +43,41 @@ export default function Matrix() {
       position: "relative",
       width: "100%",
       height: "100%",
-      background: "#000",
+      background: "#0a0a0a",
       overflow: "hidden",
     }}>
       <canvas
         ref={canvasRef}
         width={400}
         height={600}
-        style={{ width: "100%", height: "100%", opacity: 0.6 }}
+        style={{ width: "100%", height: "100%", opacity: 0.4 }}
       />
       <div style={{
         position: "absolute",
-        top: 20,
-        left: 20,
-        right: 20,
+        top: 24,
+        left: 24,
+        right: 24,
         fontFamily: "monospace",
         fontSize: 11,
-        color: "rgba(0,255,65,0.6)",
-        lineHeight: 1.8,
+        lineHeight: 1.9,
         pointerEvents: "none",
       }}>
-        <p style={{ color: "#00ff41", marginBottom: 8 }}>// sistema activo</p>
-        <p>usuario: javier_cortes</p>
-        <p>rol: full_stack_dev</p>
-        <p>estado: disponible</p>
+        <p style={{ color: "#00ff88", marginBottom: 10, fontSize: 12 }}>// sistema activo</p>
+        <p style={{ color: "#c8c8c8" }}>usuario: <span style={{ color: "#00e5ff" }}>javier_cortes</span></p>
+        <p style={{ color: "#c8c8c8" }}>rol: <span style={{ color: "#00e5ff" }}>full_stack_dev</span></p>
+        <p style={{ color: "#c8c8c8" }}>estado: <span style={{ color: "#00ff88" }}>disponible</span></p>
         <br />
-        <p style={{ color: "rgba(0,255,65,0.4)" }}>$ ping javier.dev</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>... conectando</p>
+        <p style={{ color: "#666" }}>$ ping javier.dev</p>
+        <p style={{ color: "#00ff88" }}>... conectando</p>
         <br />
-        <p style={{ color: "rgba(0,255,65,0.4)" }}>$ ls skills/</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>python flask js react</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>sqlite railway vercel</p>
+        <p style={{ color: "#666" }}>$ ls skills/</p>
+        <p style={{ color: "#c8c8c8" }}>python flask js react</p>
+        <p style={{ color: "#c8c8c8" }}>sqlite railway vercel</p>
         <br />
-        <p style={{ color: "rgba(0,255,65,0.4)" }}>$ git log --oneline</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>a1b2c3 deploy produccion</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>d4e5f6 feat: panel admin</p>
-        <p style={{ color: "rgba(0,255,65,0.3)" }}>g7h8i9 fix: inventario</p>
+        <p style={{ color: "#666" }}>$ git log --oneline</p>
+        <p style={{ color: "#c8c8c8" }}><span style={{ color: "#ff00aa" }}>a1b2c3</span> deploy produccion</p>
+        <p style={{ color: "#c8c8c8" }}><span style={{ color: "#ff00aa" }}>d4e5f6</span> feat: panel admin</p>
+        <p style={{ color: "#c8c8c8" }}><span style={{ color: "#ff00aa" }}>g7h8i9</span> fix: inventario</p>
       </div>
     </div>
   )
