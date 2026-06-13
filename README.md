@@ -52,6 +52,6 @@ npm install
 npm run dev
 ```
 
-Abrí [http://localhost:3000](http://localhost:3000) en el navegador.
+Abrí mi-portfolio-two-flame.vercel.app en el navegador.
 
 ## Estructura
