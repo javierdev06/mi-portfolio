@@ -52,6 +52,5 @@ npm install
 npm run dev
 ```
 
-Abrí mi-portfolio-two-flame.vercel.app en el navegador.
 
 ## Estructura
