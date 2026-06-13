@@ -87,6 +87,29 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
             ))}
           </div>
         </div>
+
+        {/* FGAL Construcciones */}
+        <a href="https://fgalconstrucciones.com" target="_blank" rel="noopener noreferrer" style={{ display: "block", textDecoration: "none", border: "1px solid rgba(0,255,136,0.2)", padding: 16, borderRadius: 6, marginTop: 12, background: "rgba(0,255,136,0.03)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13, fontWeight: "bold" }}>
+              FGAL Construcciones
+            </p>
+            <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,136,0.3)", padding: "2px 8px", borderRadius: 3 }}>
+              {lang === "es" ? "en línea" : "live"}
+            </span>
+          </div>
+          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, marginBottom: 10, lineHeight: 1.6 }}>
+            {lang === "es"
+              ? "Sitio web corporativo para empresa constructora chilena."
+              : "Corporate website for a Chilean construction company."
+            }
+          </p>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {["HTML", "CSS", "JavaScript"].map(t => (
+              <span key={t} style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,229,255,0.2)", padding: "2px 6px", borderRadius: 3 }}>{t}</span>
+            ))}
+          </div>
+        </a>
       </div>
     ),
     "sobre mí": (
