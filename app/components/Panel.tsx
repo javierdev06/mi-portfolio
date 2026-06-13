@@ -18,34 +18,74 @@ export default function Panel({ section, onClose, allVisited, lang }: PanelProps
         <p style={{ color: "#666", fontFamily: "monospace", fontSize: 11, marginBottom: 16 }}>
           $ ls ~/projects
         </p>
-        <div style={{ border: "1px solid rgba(0,255,136,0.2)", padding: 16, borderRadius: 6, marginBottom: 12, background: "rgba(0,255,136,0.03)" }}>
+
+        {/* Ghost Night */}
+        <a href="https://ghost-night.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ display: "block", textDecoration: "none", border: "1px solid rgba(0,255,136,0.2)", padding: 16, borderRadius: 6, marginBottom: 12, background: "rgba(0,255,136,0.03)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13, fontWeight: "bold" }}>
-              Provisiones El Retiro
+              Ghost Night
             </p>
             <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,136,0.3)", padding: "2px 8px", borderRadius: 3 }}>
-              {lang === "es" ? "producción" : "production"}
+              {lang === "es" ? "en línea" : "live"}
             </span>
           </div>
           <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, marginBottom: 10, lineHeight: 1.6 }}>
             {lang === "es"
-              ? "E-commerce full stack para minimarket local. Panel admin, inventario, WhatsApp."
-              : "Full stack e-commerce for local grocery store. Admin panel, inventory, WhatsApp."
+              ? "Juego web de terror. Explorá la oscuridad y sobreviví la noche."
+              : "Web horror game. Explore the dark and survive the night."
             }
           </p>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {["Python", "Flask", "SQLite", "Railway"].map(t => (
+            {["JavaScript", "Three.js", "Vercel"].map(t => (
               <span key={t} style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,229,255,0.2)", padding: "2px 6px", borderRadius: 3 }}>{t}</span>
             ))}
           </div>
-        </div>
-        <div style={{ border: "1px solid rgba(255,255,255,0.06)", padding: 16, borderRadius: 6, opacity: 0.4 }}>
-          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12 }}>
-            {lang === "es" ? "Próximo Proyecto" : "Next Project"}
+        </a>
+
+        {/* Mudanzas */}
+        <a href="https://mudanzas-three.vercel.app/" target="_blank" rel="noopener noreferrer" style={{ display: "block", textDecoration: "none", border: "1px solid rgba(0,255,136,0.2)", padding: 16, borderRadius: 6, marginBottom: 12, background: "rgba(0,255,136,0.03)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13, fontWeight: "bold" }}>
+              Mudanzas
+            </p>
+            <span style={{ color: "#00ff88", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,255,136,0.3)", padding: "2px 8px", borderRadius: 3 }}>
+              {lang === "es" ? "en línea" : "live"}
+            </span>
+          </div>
+          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, marginBottom: 10, lineHeight: 1.6 }}>
+            {lang === "es"
+              ? "Experiencia web en 3D construida con Three.js."
+              : "3D web experience built with Three.js."
+            }
           </p>
-          <p style={{ color: "#666", fontFamily: "monospace", fontSize: 11, marginTop: 4 }}>
-            {lang === "es" ? "En construcción..." : "In progress..."}
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {["Three.js", "Vite", "Vercel"].map(t => (
+              <span key={t} style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,229,255,0.2)", padding: "2px 6px", borderRadius: 3 }}>{t}</span>
+            ))}
+          </div>
+        </a>
+
+        {/* Forgotten Depths — en construcción */}
+        <div style={{ border: "1px solid rgba(255,170,0,0.2)", padding: 16, borderRadius: 6, background: "rgba(255,170,0,0.03)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <p style={{ color: "#fff", fontFamily: "monospace", fontSize: 13, fontWeight: "bold" }}>
+              Forgotten Depths
+            </p>
+            <span style={{ color: "#ffaa00", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(255,170,0,0.3)", padding: "2px 8px", borderRadius: 3 }}>
+              {lang === "es" ? "en construcción" : "in progress"}
+            </span>
+          </div>
+          <p style={{ color: "#c8c8c8", fontFamily: "monospace", fontSize: 12, marginBottom: 10, lineHeight: 1.6 }}>
+            {lang === "es"
+              ? "Juego de terror 3D en el navegador: exploración de cuevas con modelos y texturas PBR."
+              : "3D browser horror game: cave exploration with PBR models and textures."
+            }
           </p>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {["Three.js", "Vite", "Vanilla JS"].map(t => (
+              <span key={t} style={{ color: "#00e5ff", fontFamily: "monospace", fontSize: 10, border: "1px solid rgba(0,229,255,0.2)", padding: "2px 6px", borderRadius: 3 }}>{t}</span>
+            ))}
+          </div>
         </div>
       </div>
     ),
